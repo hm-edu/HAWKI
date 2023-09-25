@@ -14,6 +14,24 @@ if (!isset($_SESSION['username'])) {
 }
 
 ?>
+<head>
+	<title>HM-KI</title>
+	<?php 
+  if (file_exists(".env")){
+	$env = parse_ini_file('.env');
+  }
+  $favicon = isset($env) ? ($env["FAVICON_URI"]??false) : getenv("FAVICON_URI");
+  if ($favicon) {
+	echo 
+	'<link rel="shortcut icon" type="image/x-icon" href="'. $favicon .'" media="screen" />
+	<link rel="icon" type="image/x-icon" href="'. $favicon .'" media="screen" />
+	';
+  }
+ ?>
+ </head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<link rel="stylesheet" href="app.css">
 
 <link rel="stylesheet" href="app.css">	
 
