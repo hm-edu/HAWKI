@@ -134,7 +134,7 @@ if (!isset($_SESSION['username'])) {
 		
 	</div>
 	<div class="info">
-	  <a href="#" onclick="load(this, 'about.htm')">Über HAWK-KI</a>
+	  <a href="#" onclick="load(this, 'about.htm')">Über HM-KI</a>
 	  <a href="#" id="feedback" onclick="load(this, 'userpost.php')">Feedback</a>
 	  <a href="logout.php">Abmelden</a>
 	  <br>
