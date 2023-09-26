@@ -135,8 +135,14 @@ if (!isset($_SESSION['username'])) {
 	</div>
 	<div class="info">
 	  <a href="#" onclick="load(this, 'about.htm')">Über HM-KI</a>
-	  <a href="#" id="feedback" onclick="load(this, 'userpost.php')">Feedback</a>
-	  <a href="logout.php">Abmelden</a>
+	  <!-- <a href="#" id="feedback" onclick="load(this, 'userpost.php')">Feedback</a> -->
+	  <a href=<?php 
+	  	if (file_exists(".env")){
+			$env = parse_ini_file('.env');
+		}
+		if ((isset($env) ? $env["Authentication"] : getenv("Authentication")) == "OIDC"){
+		echo "oidc_logout.php";
+		} else echo "logout.php" ?>>Abmelden (<?php echo $_SESSION['username']?>)</a>
 	  <br>
 	  <a href="#" onclick="load(this, 'datenschutz.htm')">Datenschutz</a>
 	  <a href="/impressum" target="_blank">Impressum</a>
