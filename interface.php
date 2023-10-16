@@ -38,7 +38,7 @@ if (!isset($_SESSION['username'])) {
 <div class="wrapper">
   <div class="sidebar">
 	<div class="logo" onclick="load(this, 'chat.htm')">
-	 <img src="/img/hawki.svg" alt="HAWK Logo" width="150px">
+	 <img src="/img/logo.svg" alt="HAWK Logo" width="150px">
 	</div>
 	<div class="menu">
 		<details>
@@ -254,7 +254,7 @@ if (!isset($_SESSION['username'])) {
 		<button>Bestätigen</button>
 	</div>
 </div>
-
+<!--
 <div class="modal" onclick="modalClick(this)" id="gpt4"> 
 	<div class="modal-content">
 		<h2>Upgrade auf GPT4</h2>
@@ -264,7 +264,7 @@ if (!isset($_SESSION['username'])) {
 		<button>Bestätigen</button>
 	</div>
 </div>
-
+		-->
 <script>
 	visualViewport.addEventListener("resize", update);
 	visualViewport.addEventListener("scroll", update);
@@ -492,9 +492,9 @@ if (!isset($_SESSION['username'])) {
 		document.querySelector("#data-protection").remove();
 	}
 	
-	if(localStorage.getItem("gpt4")){
-		document.querySelector("#gpt4").remove();
-	}
+	//if(localStorage.getItem("gpt4")){
+	//	document.querySelector("#gpt4").remove();
+	//}
 	
 	function modalClick(element){
 		sessionStorage.setItem(element.id, "true")
