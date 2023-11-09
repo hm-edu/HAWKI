@@ -28,12 +28,13 @@ if (!isset($_SESSION['username'])) {
 <div class="wrapper">
   <div class="sidebar">
 	<div class="logo" onclick="load(this, 'chat.htm')">
-	 <img src="/img/hawki.svg" alt="HAWK Logo" width="150px">
+	 <img src="/img/logo.svg" alt="HAWK Logo" width="150px">
 	</div>
 	<div class="menu">
 		<details>
 			<summary>
 				<h3>Modell ⓘ</h3>
+				<p id="GPT4-Hinweis", style="color: crimson"> GPT 4 behauptet GPT 3 zu sein.</p>
 			</summary>
 			Wähle eines der KI Modelle.
 		</details>
@@ -46,6 +47,12 @@ if (!isset($_SESSION['username'])) {
 			<input type="radio" name="model" onchange="localStorage.setItem('model', 'gpt-4')"/>
 			<p>GPT 4</p>
 		</label>
+		<script>var radios= document.getElementsByName("model");
+				var val = localStorage.getItem('model');
+				if (val == 'gpt-4' ) {
+					radios[1].checked=true;
+				}
+			</script>
 		</div>
 		<details>
 			<summary>
@@ -244,7 +251,7 @@ if (!isset($_SESSION['username'])) {
 		<button>Bestätigen</button>
 	</div>
 </div>
-
+<!--
 <div class="modal" onclick="modalClick(this)" id="gpt4"> 
 	<div class="modal-content">
 		<h2>Upgrade auf GPT4</h2>
@@ -254,17 +261,7 @@ if (!isset($_SESSION['username'])) {
 		<button>Bestätigen</button>
 	</div>
 </div>
-
-<div class="modal" onclick="modalClick(this)" id="gpt4"> 
-	<div class="modal-content">
-		<h2>Upgrade auf GPT4</h2>
-		<p>Die Hochschule stellt Ihnen jetzt GPT4 zur Verfügung. 
-			Komplexere Eingaben können nun besser verstanden und verarbeitet werden.
-			Sie sollten nun präzisere Antworten erhalten. Die Wartezeit auf eine Antwort kann sich geringfügig verlängern.</p>
-		<button>Bestätigen</button>
-	</div>
-</div>
-
+		-->
 <script>
 	visualViewport.addEventListener("resize", update);
 	visualViewport.addEventListener("scroll", update);
@@ -417,21 +414,41 @@ if (!isset($_SESSION['username'])) {
 			}
 	
 			const decodedData = new TextDecoder().decode(value);
-			console.log(decodedData);
+			//console.log(decodedData);
 			let chunks = decodedData.split("data: ");
 			chunks.forEach((chunk, index) => {
 				if(chunk.indexOf('finish_reason":"stop"') > 0) return false;
 				if(chunk.indexOf('DONE') > 0) return false;
 				if(chunk.indexOf('role') > 0) return false;
-				if(chunk.length == 0) return false;
-				if(chunk != "") console.log(JSON.parse(chunk)["choices"][0]["delta"])
-				console.log(JSON.parse(chunk)["choices"][0]["delta"]);
-				document.querySelector(".message:last-child").querySelector(".message-text").innerHTML +=  escapeHTML(JSON.parse(chunk)["choices"][0]["delta"].content);
+				if(chunk.length === 0) return false;
+				// First check if chunk is valid json.
+				// Otherwise we do not see the correct error message.
+				try {
+					const json = JSON.parse(chunk);
+					if ("choices" in json) {
+						// console.log(json["choices"]);
+						// normal response
+						document.querySelector(".message:last-child").querySelector(".message-text").innerHTML +=
+							json["choices"][0]["delta"].content;
+					} else {
+						if ("error" in json) {
+							if ("message" in json.error) {
+								// console.log(json.error.message);
+								document.querySelector(".message:last-child").querySelector(".message-text").innerHTML =
+									'<em>' + json.error.message + '</em>';
+							} else {
+								console.log(json.error);
+							}
+						} else {
+							console.log(json);
+						}
+					}
+				} catch(error) {
+					console.log(chunk);
+					console.error(error.message);
+				}
 			})
 
-			// Check if the content has code block
-			document.querySelector(".message:last-child").querySelector(".message-text").innerHTML = document.querySelector(".message:last-child").querySelector(".message-text").innerHTML.replace(/```([\s\S]+?)```/g, '<pre><code>$1</code></pre>').replace(/\*\*.*?\*\*/g, '');;
-			hljs.highlightAll();
 			scrollToLast();
 		}
 	}
@@ -492,9 +509,9 @@ if (!isset($_SESSION['username'])) {
 		document.querySelector("#data-protection").remove();
 	}
 	
-	if(localStorage.getItem("gpt4")){
-		document.querySelector("#gpt4").remove();
-	}
+	//if(localStorage.getItem("gpt4")){
+	//	document.querySelector("#gpt4").remove();
+	//}
 	
 	function modalClick(element){
 		sessionStorage.setItem(element.id, "true")
