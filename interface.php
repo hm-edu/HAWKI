@@ -151,7 +151,7 @@ if (!isset($_SESSION['username'])) {
 		echo "oidc_logout.php";
 		} else echo "logout.php" ?>>Abmelden (<?php echo $_SESSION['username']?>)</a>
 	  <br>
-	  <a href="#" onclick="load(this, 'datenschutz.htm')">Datenschutz</a>
+	  <a href="/datenschutz" target="_blank">Datenschutz</a>
 	  <a href="/impressum" target="_blank">Impressum</a>
 	</div>
   </div>
