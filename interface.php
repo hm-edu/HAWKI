@@ -41,29 +41,20 @@ if (!isset($_SESSION['username'])) {
 	 <img src="/img/logo.svg" alt="HAWK Logo" width="150px">
 	</div>
 	<div class="menu">
-		<details>
-			<summary>
-				<h3>Modell ⓘ</h3>
-				<p id="GPT4-Hinweis", style="color: crimson"> GPT 4 behauptet GPT 3 zu sein.</p>
-			</summary>
-			Wähle eines der KI Modelle.
-		</details>
-		<div class="radiogroup">
-		<label>
-			<input type="radio" name="model" onchange="localStorage.setItem('model', 'gpt-3.5-turbo')" checked="checked"/>
-			<p>GPT 3.5 Turbo</p>
-		</label>
-		<label>
-			<input type="radio" name="model" onchange="localStorage.setItem('model', 'gpt-4')"/>
-			<p>GPT 4</p>
-		</label>
-		<script>var radios= document.getElementsByName("model");
-				var val = localStorage.getItem('model');
-				if (val == 'gpt-4' ) {
-					radios[1].checked=true;
-				}
-			</script>
-		</div>
+		<form>
+			<details>
+				<summary>
+					<h3>Modell ⓘ</h3>
+				</summary>
+				Wähle eines der KI Modelle.
+			</details>
+			<select id = "GPT-Version">
+				<option value="gpt-4-1106-preview" selected="selected"> GPT 4 Turbo </option>
+				<option value="gpt-4"> GPT 4</option>
+				<option value="gpt-3.5-turbo"> GPT 3.5 Turbo </option>
+			</select>
+			<p id="GPT4-Hinweis", style="color: crimson"> GPT 4 behauptet GPT 3 zu sein.</p>
+		</form>
 		<details>
 			<summary>
 				<h3>Konversation ⓘ</h3>
@@ -371,7 +362,7 @@ if (!isset($_SESSION['username'])) {
 		document.querySelector('.limitations')?.remove();
 		
 		const requestObject = {};
-		requestObject.model = 'gpt-4';
+		requestObject.model = document.getElementById("GPT-Version").value || 'gpt-3.5-turbo';
 		requestObject.stream = true;
 		requestObject.messages = [];
 		const messageElements = messagesElement.querySelectorAll(".message");
