@@ -196,7 +196,7 @@ if (!isset($_SESSION['username'])) {
 	<div class="message me" data-role="system">
 		<div class="message-content">
 			<div class="message-icon">System</div>
-			<div class="message-text">You are a helpful assistant who works at the University of Applied Arts and Sciences in Lower Saxony.</div>
+			<div class="message-text">You are a helpful assistant who works at the University of Applied Sciences in Munich.</div>
 		</div>
 	</div>
 	  
