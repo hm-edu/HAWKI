@@ -216,18 +216,6 @@ if (!isset($_SESSION['username'])) {
 			Betaversion - befindet sich noch in Entwicklung
 		</div>
 	</div>
-	
-	<div class="userpost-container">
-		  <div class="userpost">
-			  <textarea class="userpost-field" type="text" placeholder="Hier können Sie Ihr Feedback hinterlassen" oninput="resize(this)" onkeypress="handleKeydownUserPost(event)"></textarea>
-			  <div class="userpost-send" onclick="send_userpost()">
-				  <svg viewBox="0 0 24 24">
-					  <path d="M3 20V4L22 12M5 17L16.85 12L5 7V10.5L11 12L5 13.5M5 17V7 13.5Z" />
-				  </svg>
-			  </div>
-		  </div>
-	  </div>
-	  
 	  
   </div>
   
@@ -299,10 +287,6 @@ if (!isset($_SESSION['username'])) {
 			  if(sessionStorage.getItem("truth")){
 				  document.querySelector("#truth")?.remove();
 			  }
-			  
-			  if(filename == "userpost.php"){
-				  voteHover();
-			  }
 		  });
 		
 		document.querySelector(".menu-item.active")?.classList.remove("active");
@@ -337,13 +321,6 @@ if (!isset($_SESSION['username'])) {
 		if(event.key == "Enter" && !event.shiftKey){
 			event.preventDefault();
 			request();
-		} 
-	}
-	
-	function handleKeydownUserPost(event){
-		if(event.key == "Enter" && !event.shiftKey){
-			event.preventDefault();
-			send_userpost();
 		} 
 	}
 	
@@ -517,67 +494,6 @@ if (!isset($_SESSION['username'])) {
 	function modalClick(element){
 		sessionStorage.setItem(element.id, "true")
 		element.remove();
-	}
-	
-	
-	async function send_userpost(){
-		const messagesElement = document.querySelector(".messages");
-		const messageTemplate = document.querySelector('#message');
-		const inputField = document.querySelector(".userpost-field");
-		
-		let message = {};
-		message.role = '<?= $_SESSION['username'] ?>';
-		message.content = inputField.value.trim();
-		
-		fetch('userpost.php', {
-			method: 'POST',
-			body: JSON.stringify(message),
-		})
-		.then(response => response.json())
-		.then(data => {
-			console.log(data)
-			load(document.querySelector("#feedback"), 'userpost.php');
-			inputField.value = "";
-		})
-		.catch(error => console.error(error));
-	}
-	
-	async function upvote(element){
-		if(localStorage.getItem(element.dataset.id)){
-			return;
-		}
-		localStorage.setItem(element.dataset.id, "true");
-		fetch('upvote.php', {
-			method: 'POST',
-			body: element.dataset.id,
-		})
-		.then(response => response.text())
-		.then(data => {
-			console.log(data)
-			element.querySelector("span").textContent = parseInt(element.querySelector("span").textContent) + 1;
-		})
-		.catch(error => console.error(error));
-		
-		voteHover();
-	}
-	
-	async function downvote(element){
-		if(localStorage.getItem(element.dataset.id)){
-			return;
-		}
-		localStorage.setItem(element.dataset.id, "true");
-		fetch('downvote.php', {
-			method: 'POST',
-			body: element.dataset.id,
-		})
-		.then(response => response.text())
-		.then(data => {
-			console.log(data)
-			element.querySelector("span").textContent = parseInt(element.querySelector("span").textContent) + 1;
-		})
-		.catch(error => console.error(error));
-		
-		voteHover();
 	}
 	
 	async function voteHover(){
