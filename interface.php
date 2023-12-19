@@ -346,7 +346,7 @@ if (!isset($_SESSION['username'])) {
 		messageElements.forEach(messageElement => {
 			let messageObject = {};
 			messageObject.role = messageElement.dataset.role;
-			messageObject.content = messageElement.querySelector(".message-text").textContent;
+			messageObject.content = messageElement.dataset.content;
 			requestObject.messages.push(messageObject);
 		})
 		
@@ -406,8 +406,8 @@ if (!isset($_SESSION['username'])) {
 					if ("choices" in json) {
 						// console.log(json["choices"]);
 						// normal response
-						document.querySelector(".message:last-child").querySelector(".message-text").innerHTML +=
-							json["choices"][0]["delta"].content;
+						document.querySelector(".message:last-child").dataset.content += json["choices"][0]["delta"].content;
+						document.querySelector(".message:last-child").querySelector(".message-text").innerHTML +=  escapeHTML(json["choices"][0]["delta"].content);
 					} else {
 						if ("error" in json) {
 							if ("message" in json.error) {
@@ -427,6 +427,8 @@ if (!isset($_SESSION['username'])) {
 				}
 			})
 
+			document.querySelector(".message:last-child").querySelector(".message-text").innerHTML = document.querySelector(".message:last-child").querySelector(".message-text").innerHTML.replace(/```([\s\S]+?)```/g, '<pre><code>$1</code></pre>').replace(/\*\*.*?\*\*/g, '');;
+			hljs.highlightAll();
 			scrollToLast();
 		}
 	}
@@ -448,6 +450,8 @@ if (!isset($_SESSION['username'])) {
 		
 		messageElement.querySelector(".message-text").innerHTML = escapeHTML(message.content);
 		messageElement.querySelector(".message").dataset.role = message.role;
+		messageElement.querySelector(".message").dataset.content = message.content;
+
 		
 		if(message.role == "assistant"){
 			messageElement.querySelector(".message-icon").textContent = "AI";
