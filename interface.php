@@ -446,7 +446,7 @@ if (!isset($_SESSION['username'])) {
 		const inputField = document.querySelector(".input-field");
 		const messageElement = messageTemplate.content.cloneNode(true);
 		
-		messageElement.querySelector(".message-text").innerHTML = message.content;
+		messageElement.querySelector(".message-text").innerHTML = escapeHTML(message.content);
 		messageElement.querySelector(".message").dataset.role = message.role;
 		
 		if(message.role == "assistant"){
