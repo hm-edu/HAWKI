@@ -1,4 +1,7 @@
 <?php
+
+define('ALLOWED_KEYS', ["model", "stream", "messages"]);
+
 session_start();
 
 if (file_exists(".env")){
@@ -14,7 +17,19 @@ if (!isset($_SESSION['username'])) {
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 	
 	$url = 'https://api.openai.com/v1/chat/completions';
-	$data = file_get_contents("php://input");
+	$payload = file_get_contents("php://input");
+
+	// Validate JSON payload
+	$data = json_decode($payload, true);
+	if (json_last_error() !== JSON_ERROR_NONE || !is_array($data)) {
+		die("invalid json");
+	}
+	// check for additional query keys
+	$keys = array_keys($data);
+	$diff = array_diff($keys, ALLOWED_KEYS);
+	if (!empty($diff)) {
+		die("invalid json");
+	}
 
 	$headers = array(
 		"Authorization: Bearer $apiKey",
@@ -26,7 +41,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 		CURLOPT_URL => $url,
 		CURLOPT_POST => true,
 		CURLOPT_HTTPHEADER => $headers,
-		CURLOPT_POSTFIELDS => $data,
+		CURLOPT_POSTFIELDS => $payload,
 		CURLOPT_RETURNTRANSFER => true
 	);
 
