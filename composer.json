@@ -1,5 +1,7 @@
 {
     "require": {
-        "jumbojett/openid-connect-php": "^0.9.10"
+        "jumbojett/openid-connect-php": "^0.9.10",
+        "thenetworg/oauth2-azure": "^2.2",
+        "components/highlightjs": "^9.16"
     }
 }
