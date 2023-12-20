@@ -343,7 +343,7 @@ if (!isset($_SESSION['username'])) {
 		messageElements.forEach(messageElement => {
 			let messageObject = {};
 			messageObject.role = messageElement.dataset.role;
-			messageObject.content = messageElement.dataset.content;
+			messageObject.content = messageElement.dataset.content || messageElement.querySelector(".message-text").innerHTML;
 			requestObject.messages.push(messageObject);
 		})
 		
