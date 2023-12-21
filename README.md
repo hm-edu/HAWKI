@@ -1,5 +1,11 @@
 # HAWKI
 
+# NEU NEU NEU
+
+Im Rahmen der gemeinsamen Weiterentwicklung von HAWKI möchten wir ein Dokument zur Verfügung stellen, das verschiedene Nutzungsmöglichkeiten von HAWKI aufzeigt. Hier ist Platz, um Promptvorschläge für die Hochschullehre zu machen oder weitere fiktive Expert*innen für das virtuelle Büro hinzuzufügen.
+https://pad.hawk.de/p/Offener_Prompt-Katalog
+
+
 ## About
 
 HAWKI is a didactic interface for universities based on the OpenAI API. It is not necessary for users to create an account, the university ID is sufficient for login - no user-related data is stored.
@@ -69,6 +75,8 @@ There are a few things to keep in mind when publishing your HAWKI instance on a 
 First and foremost your webserver needs PHP support.
 
 Also, make sure that you disable `output_buffering` in your webserver configuration otherwise you might run into issues when receiving the repsonse stream from Open AI.
+
+If you are setting up a new server, make sure that you install the cURL library. https://www.php.net/manual/de/book.curl.php
 
 **_IMPORTANT:_** _Keep the `.env` configuration file secret. Make sure your webserver does not allow directory listing and it blocks access to this configuration file. Double check that it can not be queried with a simple GET request via http://your-hawki-domain/.env_
 

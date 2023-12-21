@@ -1,5 +1,7 @@
 <?php
 
+define('ALLOWED_KEYS', ["model", "stream", "messages"]);
+
 session_start();
 if (!isset($_SESSION['username'])) {
 	http_response_code(401);
@@ -29,6 +31,18 @@ $apiKey = isset($env) ? $env['OPENAI_API_KEY'] : getenv('OPENAI_API_KEY');
 
 // Read the request payload from the client
 $requestPayload = file_get_contents('php://input');
+
+// Validate JSON payload
+$data = json_decode($requestPayload, true);
+if (json_last_error() !== JSON_ERROR_NONE || !is_array($data)) {
+	die("invalid json");
+}
+// check for additional query keys
+$keys = array_keys($data);
+$diff = array_diff($keys, ALLOWED_KEYS);
+if (!empty($diff)) {
+	die("invalid json");
+}
 
 $ch = curl_init();
 curl_setopt($ch, CURLOPT_URL, $apiUrl);

@@ -23,6 +23,10 @@ if (!isset($_SESSION['username'])) {
  ?>
  </head>
 <meta name="viewport" content="width=device-width, initial-scale=1">
+
+<link rel="stylesheet" href="/highlightjs/styles/vs.css">
+<script src="/highlightjs/highlight.min.js"></script>
+
 <link rel="stylesheet" href="app.css">
 
 <div class="wrapper">
@@ -31,29 +35,22 @@ if (!isset($_SESSION['username'])) {
 	 <img src="/img/logo.svg" alt="HAWK Logo" width="150px">
 	</div>
 	<div class="menu">
-		<details>
-			<summary>
-				<h3>Modell ⓘ</h3>
-				<p id="GPT4-Hinweis", style="color: crimson"> GPT 4 behauptet GPT 3 zu sein.</p>
-			</summary>
-			Wähle eines der KI Modelle.
-		</details>
-		<div class="radiogroup">
-		<label>
-			<input type="radio" name="model" onchange="localStorage.setItem('model', 'gpt-3.5-turbo')" checked="checked"/>
-			<p>GPT 3.5 Turbo</p>
-		</label>
-		<label>
-			<input type="radio" name="model" onchange="localStorage.setItem('model', 'gpt-4')"/>
-			<p>GPT 4</p>
-		</label>
-		<script>var radios= document.getElementsByName("model");
-				var val = localStorage.getItem('model');
-				if (val == 'gpt-4' ) {
-					radios[1].checked=true;
-				}
-			</script>
-		</div>
+
+		<form>
+			<details>
+				<summary>
+					<h3>Modell ⓘ</h3>
+				</summary>
+				Wähle eines der KI Modelle.
+			</details>
+			<select id = "GPT-Version">
+				<option value="gpt-4-1106-preview" selected="selected"> GPT 4 Turbo </option>
+				<option value="gpt-4"> GPT 4</option>
+				<option value="gpt-3.5-turbo"> GPT 3.5 Turbo </option>
+			</select>
+			<p id="GPT4-Hinweis", style="color: crimson"> GPT 4 behauptet GPT 3 zu sein.</p>
+		</form>
+
 		<details>
 			<summary>
 				<h3>Konversation ⓘ</h3>
@@ -141,7 +138,7 @@ if (!isset($_SESSION['username'])) {
 		echo "oidc_logout.php";
 		} else echo "logout.php" ?>>Abmelden (<?php echo $_SESSION['username']?>)</a>
 	  <br>
-	  <a href="#" onclick="load(this, 'datenschutz.htm')">Datenschutz</a>
+	  <a href="/datenschutz" target="_blank">Datenschutz</a>
 	  <a href="/impressum" target="_blank">Impressum</a>
 	</div>
   </div>
@@ -195,7 +192,7 @@ if (!isset($_SESSION['username'])) {
 	<div class="message me" data-role="system">
 		<div class="message-content">
 			<div class="message-icon">System</div>
-			<div class="message-text">You are a helpful assistant who works at the University of Applied Arts and Sciences in Lower Saxony.</div>
+			<div class="message-text">You are a helpful assistant who works at the University of Applied Sciences in Munich.</div>
 		</div>
 	</div>
 	  
@@ -215,18 +212,6 @@ if (!isset($_SESSION['username'])) {
 			Betaversion - befindet sich noch in Entwicklung
 		</div>
 	</div>
-	
-	<div class="userpost-container">
-		  <div class="userpost">
-			  <textarea class="userpost-field" type="text" placeholder="Hier können Sie Ihr Feedback hinterlassen" oninput="resize(this)" onkeypress="handleKeydownUserPost(event)"></textarea>
-			  <div class="userpost-send" onclick="send_userpost()">
-				  <svg viewBox="0 0 24 24">
-					  <path d="M3 20V4L22 12M5 17L16.85 12L5 7V10.5L11 12L5 13.5M5 17V7 13.5Z" />
-				  </svg>
-			  </div>
-		  </div>
-	  </div>
-	  
 	  
   </div>
   
@@ -298,10 +283,6 @@ if (!isset($_SESSION['username'])) {
 			  if(sessionStorage.getItem("truth")){
 				  document.querySelector("#truth")?.remove();
 			  }
-			  
-			  if(filename == "userpost.php"){
-				  voteHover();
-			  }
 		  });
 		
 		document.querySelector(".menu-item.active")?.classList.remove("active");
@@ -339,13 +320,6 @@ if (!isset($_SESSION['username'])) {
 		} 
 	}
 	
-	function handleKeydownUserPost(event){
-		if(event.key == "Enter" && !event.shiftKey){
-			event.preventDefault();
-			send_userpost();
-		} 
-	}
-	
 	async function request(){
 		const messagesElement = document.querySelector(".messages");
 		const messageTemplate = document.querySelector('#message');
@@ -361,14 +335,14 @@ if (!isset($_SESSION['username'])) {
 		document.querySelector('.limitations')?.remove();
 		
 		const requestObject = {};
-		requestObject.model = localStorage.getItem("model") || 'gpt-3.5-turbo';
+		requestObject.model = document.getElementById("GPT-Version").value || 'gpt-3.5-turbo';
 		requestObject.stream = true;
 		requestObject.messages = [];
 		const messageElements = messagesElement.querySelectorAll(".message");
 		messageElements.forEach(messageElement => {
 			let messageObject = {};
 			messageObject.role = messageElement.dataset.role;
-			messageObject.content = messageElement.querySelector(".message-text").textContent;
+			messageObject.content = messageElement.dataset.content || messageElement.querySelector(".message-text").innerHTML;
 			requestObject.messages.push(messageObject);
 		})
 		
@@ -409,6 +383,12 @@ if (!isset($_SESSION['username'])) {
 	
 			if (done) {
 				console.log('Stream closed.');
+				document.querySelector(".message:last-child").querySelector(".message-text").innerHTML = document.querySelector(".message:last-child").querySelector(".message-text").innerHTML.replace(/```([\s\S]+?)```/g, '<pre><code>$1</code></pre>').replace(/\*\*.*?\*\*/g, '');;
+				//hljs.highlightAll();
+				document.querySelector(".message:last-child").querySelector(".message-text").querySelectorAll('pre code').forEach((block) => {
+					hljs.highlightElement(block);
+				});
+
 				document.querySelector(".message:last-child").querySelector(".message-text").innerHTML = linkify(document.querySelector(".message:last-child").querySelector(".message-text").innerHTML);
 				break;
 			}
@@ -428,8 +408,8 @@ if (!isset($_SESSION['username'])) {
 					if ("choices" in json) {
 						// console.log(json["choices"]);
 						// normal response
-						document.querySelector(".message:last-child").querySelector(".message-text").innerHTML +=
-							json["choices"][0]["delta"].content;
+						document.querySelector(".message:last-child").dataset.content += json["choices"][0]["delta"].content;
+						document.querySelector(".message:last-child").querySelector(".message-text").innerHTML +=  escapeHTML(json["choices"][0]["delta"].content);
 					} else {
 						if ("error" in json) {
 							if ("message" in json.error) {
@@ -468,13 +448,15 @@ if (!isset($_SESSION['username'])) {
 		const inputField = document.querySelector(".input-field");
 		const messageElement = messageTemplate.content.cloneNode(true);
 		
-		messageElement.querySelector(".message-text").innerHTML = message.content;
+		messageElement.querySelector(".message-text").innerHTML = escapeHTML(message.content);
 		messageElement.querySelector(".message").dataset.role = message.role;
+		messageElement.querySelector(".message").dataset.content = message.content;
+
 		
 		if(message.role == "assistant"){
 			messageElement.querySelector(".message-icon").textContent = "AI";
 		}else{
-			messageElement.querySelector(".message-icon").textContent = '<?= isset($_SESSION['initials']) ? $_SESSION['initials']: $_SESSION['username'] ?>';
+			messageElement.querySelector(".message-icon").textContent = 'ich';
 			messageElement.querySelector(".message").classList.add("me");
 		}
 		
@@ -516,67 +498,6 @@ if (!isset($_SESSION['username'])) {
 	function modalClick(element){
 		sessionStorage.setItem(element.id, "true")
 		element.remove();
-	}
-	
-	
-	async function send_userpost(){
-		const messagesElement = document.querySelector(".messages");
-		const messageTemplate = document.querySelector('#message');
-		const inputField = document.querySelector(".userpost-field");
-		
-		let message = {};
-		message.role = '<?= isset($_SESSION['initials']) ? $_SESSION['initials']: $_SESSION['username'] ?>';
-		message.content = inputField.value.trim();
-		
-		fetch('userpost.php', {
-			method: 'POST',
-			body: JSON.stringify(message),
-		})
-		.then(response => response.json())
-		.then(data => {
-			console.log(data)
-			load(document.querySelector("#feedback"), 'userpost.php');
-			inputField.value = "";
-		})
-		.catch(error => console.error(error));
-	}
-	
-	async function upvote(element){
-		if(localStorage.getItem(element.dataset.id)){
-			return;
-		}
-		localStorage.setItem(element.dataset.id, "true");
-		fetch('upvote.php', {
-			method: 'POST',
-			body: element.dataset.id,
-		})
-		.then(response => response.text())
-		.then(data => {
-			console.log(data)
-			element.querySelector("span").textContent = parseInt(element.querySelector("span").textContent) + 1;
-		})
-		.catch(error => console.error(error));
-		
-		voteHover();
-	}
-	
-	async function downvote(element){
-		if(localStorage.getItem(element.dataset.id)){
-			return;
-		}
-		localStorage.setItem(element.dataset.id, "true");
-		fetch('downvote.php', {
-			method: 'POST',
-			body: element.dataset.id,
-		})
-		.then(response => response.text())
-		.then(data => {
-			console.log(data)
-			element.querySelector("span").textContent = parseInt(element.querySelector("span").textContent) + 1;
-		})
-		.catch(error => console.error(error));
-		
-		voteHover();
 	}
 	
 	async function voteHover(){
