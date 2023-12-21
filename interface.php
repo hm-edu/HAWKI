@@ -23,8 +23,10 @@ if (!isset($_SESSION['username'])) {
  ?>
  </head>
 <meta name="viewport" content="width=device-width, initial-scale=1">
+
 <link rel="stylesheet" href="/highlightjs/styles/vs.css">
 <script src="/highlightjs/highlight.min.js"></script>
+
 <link rel="stylesheet" href="app.css">
 
 <div class="wrapper">
@@ -33,6 +35,7 @@ if (!isset($_SESSION['username'])) {
 	 <img src="/img/logo.svg" alt="HAWK Logo" width="150px">
 	</div>
 	<div class="menu">
+
 		<form>
 			<details>
 				<summary>
@@ -47,6 +50,7 @@ if (!isset($_SESSION['username'])) {
 			</select>
 			<p id="GPT4-Hinweis", style="color: crimson"> GPT 4 behauptet GPT 3 zu sein.</p>
 		</form>
+
 		<details>
 			<summary>
 				<h3>Konversation ⓘ</h3>
