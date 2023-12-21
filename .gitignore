@@ -1,4 +1,8 @@
 .env
 .DS_Store
+feedback/
+#feedback/*/***
 
-feedback/*/***
+Caddyfile
+compose.yml
+Dockerfile.nginx
