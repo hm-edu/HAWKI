@@ -379,6 +379,12 @@ if (!isset($_SESSION['username'])) {
 	
 			if (done) {
 				console.log('Stream closed.');
+				document.querySelector(".message:last-child").querySelector(".message-text").innerHTML = document.querySelector(".message:last-child").querySelector(".message-text").innerHTML.replace(/```([\s\S]+?)```/g, '<pre><code>$1</code></pre>').replace(/\*\*.*?\*\*/g, '');;
+				//hljs.highlightAll();
+				document.querySelector(".message:last-child").querySelector(".message-text").querySelectorAll('pre code').forEach((block) => {
+					hljs.highlightElement(block);
+				});
+
 				document.querySelector(".message:last-child").querySelector(".message-text").innerHTML = linkify(document.querySelector(".message:last-child").querySelector(".message-text").innerHTML);
 				break;
 			}
@@ -419,8 +425,6 @@ if (!isset($_SESSION['username'])) {
 				}
 			})
 
-			document.querySelector(".message:last-child").querySelector(".message-text").innerHTML = document.querySelector(".message:last-child").querySelector(".message-text").innerHTML.replace(/```([\s\S]+?)```/g, '<pre><code>$1</code></pre>').replace(/\*\*.*?\*\*/g, '');;
-			hljs.highlightAll();
 			scrollToLast();
 		}
 	}
