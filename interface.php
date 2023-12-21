@@ -448,7 +448,7 @@ if (!isset($_SESSION['username'])) {
 		if(message.role == "assistant"){
 			messageElement.querySelector(".message-icon").textContent = "AI";
 		}else{
-			messageElement.querySelector(".message-icon").textContent = '<?= $_SESSION['username'] ?>';
+			messageElement.querySelector(".message-icon").textContent = 'ich';
 			messageElement.querySelector(".message").classList.add("me");
 		}
 		
