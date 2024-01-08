@@ -264,10 +264,6 @@ if(sessionStorage.getItem("data-protection")){
     document.querySelector("#data-protection").remove();
 }
 
-//if(localStorage.getItem("gpt4")){
-//	document.querySelector("#gpt4").remove();
-//}
-
 function modalClick(element){
     sessionStorage.setItem(element.id, "true")
     element.remove();
