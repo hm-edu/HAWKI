@@ -146,7 +146,12 @@
 <!-- partial:index.partial.html -->
 <div class="wrapper">
   <aside>
-	<img src="/img/logo.svg" alt="">
+	<img src=<?php 
+	 	$logo = isset($env) ? ($env["LOGO"]??false) : getenv("LOGO");
+		if ($logo) {
+			echo $logo;
+		}
+	 ?>  alt="">
 	<h2>Willkommen zurück!</h2>
 	  <?php
 	  if (file_exists(".env")){
@@ -181,13 +186,7 @@
 	  }
 
 	  ?>
-	<!--<h2 class="top-auto">Interesse?</h2>
-	<p>Wenn Sie das Interface für Ihre Hochschule ausprobieren möchten, hinterlassen Sie bitte hier Ihre E-Mail-Adresse.</p>
-	<form action="<?php echo $_SERVER['PHP_SELF']; ?>" class="column" method="post" id="newsletterForm">
-	  <label for="newsletter">E-Mail-Adresse</label>
-	  <input type="email" name="newsletter" id="newsletter">
-	  <button>Senden</button>
-	</form>-->
+
 	<a href="/datenschutz" target="_blank">Datenschutzerklärung</a>
 	<a href="/impressum" target="_blank">Impressum</a>
 	
