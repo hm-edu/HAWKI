@@ -49,9 +49,18 @@ if (!isset($_SESSION['username'])) {
 				Wähle eines der KI Modelle.
 			</details>
 			<select id = "GPT-Version">
-				<option value="gpt-4-1106-preview" token_limit="128000" selected="selected"> GPT 4 Turbo </option>
-				<option value="gpt-4" token_limit="8192"> GPT 4</option>
-				<option value="gpt-3.5-turbo" token_limit="4096"> GPT 3.5 Turbo </option>
+				<?php
+					$gpt_versions=isset($env) ? ($env["GPT_VERSIONS"]??false) : getenv("GPT_VERSIONS");
+					if($gpt_versions){
+						$string ="";
+						$gpt_version =  explode(';', $gpt_versions);
+						foreach($gpt_version as $version){
+							$value = explode(',', $version);
+							$string = $string . '<option value="' . $value[0] . '"token_limit="' . $value[1] . '">' . $value[2] . '</option>';
+						}
+						echo $string;
+					}
+				?>
 			</select>
 			<p id="GPT4-Hinweis", style="color: crimson"> GPT 4 behauptet GPT 3 zu sein.</p>
 		</form>
