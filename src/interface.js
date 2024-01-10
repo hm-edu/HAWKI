@@ -158,7 +158,7 @@ async function processStream(stream) {
 
         if (done) {
             console.log('Stream closed.');
-            document.querySelector(".message:last-child").querySelector(".message-text").innerHTML = document.querySelector(".message:last-child").querySelector(".message-text").innerHTML.replace(/```([\s\S]+?)```/g, '<pre><code>$1</code></pre>').replace(/\*\*.*?\*\*/g, '');;
+            document.querySelector(".message:last-child").querySelector(".message-text").innerHTML = document.querySelector(".message:last-child").querySelector(".message-text").innerHTML.replace(/```([\s\S]+?)```/g, '<pre><code>$1</code></pre>');
             //hljs.highlightAll();
             document.querySelector(".message:last-child").querySelector(".message-text").querySelectorAll('pre code').forEach((block) => {
                 hljs.highlightElement(block);
