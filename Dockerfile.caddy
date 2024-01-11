@@ -10,4 +10,4 @@ RUN apk add --no-cache npm nodejs \
 
 FROM caddy:latest
 WORKDIR /var/www/html/public
-COPY --from=BUILD /var/www/html/src /var/www/html/public
+COPY --from=BUILD /var/www/html/public/src /var/www/html/public
