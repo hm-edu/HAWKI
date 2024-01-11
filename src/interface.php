@@ -50,16 +50,16 @@ if (!isset($_SESSION['username'])) {
 			</details>
 			<select id = "GPT-Version">
 				<?php
-					$gpt_versions=isset($env) ? ($env["GPT_VERSIONS"]??false) : getenv("GPT_VERSIONS");
-					if($gpt_versions){
-						$string ="";
-						$gpt_version =  explode(';', $gpt_versions);
-						foreach($gpt_version as $version){
-							$value = explode(',', $version);
-							$string = $string . '<option value="' . $value[0] . '"token_limit="' . $value[1] . '">' . $value[2] . '</option>';
+					$options ="";
+					for($X = 0;;$X++){
+						$gpt_version=isset($env) ? ($env["GPT_VERSION$X"]??false) : getenv("GPT_VERSION$X");
+						if(!$gpt_version){
+							break;
+							}
+						$value =  explode(',', $gpt_version);
+						$options = $options . '<option value="' . $value[0] . '"token_limit="' . $value[1] . '">' . $value[2] . '</option>';
 						}
-						echo $string;
-					}
+					echo $options;
 				?>
 			</select>
 			<p id="GPT4-Hinweis", style="color: crimson"> GPT 4 behauptet GPT 3 zu sein.</p>
