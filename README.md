@@ -20,10 +20,10 @@ Learning Space: The learning spaces are designed to help you understand the diff
 
 We welcome constructive feedback to further develop this project based on your needs and insights.
 
-![HAWKI Login](/img/hawki-screenshot-login.png)
+![HAWKI Login](/src/img/hawki-screenshot-login.png)
 _HAWKI Login Screen_
 
-![HAWKI Dashboard](/img/hawki-screenshot-dashboard.png)
+![HAWKI Dashboard](/src/img/hawki-screenshot-dashboard.png)
 _HAWKI Dashboard_
 
 ## Getting started
@@ -66,7 +66,9 @@ To get started you need to add a configuration file to the project first. Copy t
 | IMPRINT_LOCATION | string  | https://your-university/imprint        | A link to your imprint. Alternatively you can replace the file index.php under /impressum with your own html/ php of your imprint.                 |
 | PRIVACY_LOCATION | string  | https://your-university/privacy-policy | A link to your privacy policy. Alternatively you can replace the file index.php under /datenschutz with your own html/ php of your privacy policy. |
 | TESTUSER         | boolean | `false`                                | Can be set to `true` for testing purposes. You can then sign in using username `tester` and password `superlangespasswort123`                      |
-| FAVICON_URI  | string  | "https://...."                                 | Link to favicon 
+| FAVICON_URI  | string  | "https://...."                                 | Link to favicon |
+| LOGO       |string | "/img/logo.svg"                                | |
+|GPT_MODEL[X]|string|- GPT_MODEL0=gpt-4,8192,GPT 4<br> - GPT_MODEL1=[MODEL],[CONTEXT WINDOW],[DISPLAYED NAME]|Set GPT models. context window: https://platform.openai.com/docs/models|
 
 ## Web Server Configuration
 
