@@ -1,0 +1,46 @@
+services:
+  caddy:
+    build:
+        dockerfile: Dockerfile.caddy
+    ports:
+            - "8000:80"
+    volumes:
+            - ./Caddyfile:/etc/caddy/Caddyfile:ro
+    links: 
+            - php-fpm
+          
+  php-fpm:
+    build: 
+        dockerfile: Dockerfile.php
+
+    environment:
+        - Authentication=LDAP
+        #LDAP
+        - LDAP_LOGIN_BUTTON=Login
+        - LDAP_HOST="ldaps://..."
+        - LDAP_BASE_DN="cn=...,ou=...,dc=..."
+        - LDAP_BIND_PW="..."
+        - LDAP_SEARCH_DN="ou=...,dc=..."
+
+        #OIDC
+        - OIDC_IDP=
+        - OIDC_CLIENT_ID=
+        - OIDC_CLIENT_SECRET=
+        - OIDC_LOGOUT_URI=
+        - OIDC_LOGIN_BUTTON=Login
+
+        - OPENAI_API_KEY=
+
+        - IMPRINT_LOCATION=
+        - PRIVACY_LOCATION=
+        
+        - FAVICON_URI=
+        - LOGO=/img/logo.svg
+
+        # [MODEL],[CONTEXT WINDOW],[DISPLAYED NAME]
+        #context window: https://platform.openai.com/docs/models
+        - GPT_MODEL0=gpt-4-1106-preview,128000,GPT 4 Turbo
+        - GPT_MODEL1=gpt-4,8192,GPT 4
+        - GPT_MODEL2=gpt-3.5-turbo,4096,GPT 3.5 Turbo
+
+        - TESTUSER=false

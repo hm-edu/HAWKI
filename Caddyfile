@@ -1,0 +1,8 @@
+localhost:80 {
+        header -Server
+        root * /var/www/html/public
+        php_fastcgi php-fpm:9000 {
+                root /var/www/html
+        }
+        file_server
+}
