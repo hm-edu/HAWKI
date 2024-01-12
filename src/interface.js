@@ -2,7 +2,7 @@ import {encodingForModel } from "js-tiktoken";
 
 // include latest messages until token limit is reached
 function requestMessages() {
-    const tiktoken = encodingForModel(document.getElementById("GPT-Version").value);
+    const tiktoken = encodingForModel(document.getElementById("GPT-Model").value);
     const messagesElement = document.querySelector(".messages");
     const messageElements = messagesElement.querySelectorAll(".message");
 
@@ -10,7 +10,7 @@ function requestMessages() {
     // next answer is also counted towards token limit. "Depending on the model used, requests can use up to 4097 tokens shared between prompt and completion." 
     var token_count = 1000;
 
-    var selectElement = document.getElementById("GPT-Version");
+    var selectElement = document.getElementById("GPT-Model");
     var selectedOption = selectElement.options[selectElement.selectedIndex];
     var token_limit = selectedOption.getAttribute("token_limit");
     
@@ -115,7 +115,7 @@ async function request(){
     document.querySelector('.limitations')?.remove();
     
     const requestObject = {};
-    requestObject.model = document.getElementById("GPT-Version").value || 'gpt-3.5-turbo';
+    requestObject.model = document.getElementById("GPT-Model").value || 'gpt-3.5-turbo';
     requestObject.stream = true;
     requestObject.messages = [];
 

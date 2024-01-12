@@ -48,15 +48,15 @@ if (!isset($_SESSION['username'])) {
 				</summary>
 				Wähle eines der KI Modelle.
 			</details>
-			<select id = "GPT-Version">
+			<select id = "GPT-Model">
 				<?php
 					$options ="";
 					for($X = 0;;$X++){
-						$gpt_version=isset($env) ? ($env["GPT_VERSION$X"]??false) : getenv("GPT_VERSION$X");
-						if(!$gpt_version){
+						$gpt_model=isset($env) ? ($env["GPT_MODEL$X"]??false) : getenv("GPT_MODEL$X");
+						if(!$gpt_model){
 							break;
 							}
-						$value =  explode(',', $gpt_version);
+						$value =  explode(',', $gpt_model);
 						$options = $options . '<option value="' . $value[0] . '"token_limit="' . $value[1] . '">' . $value[2] . '</option>';
 						}
 					echo $options;
