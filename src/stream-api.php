@@ -37,6 +37,24 @@ $data = json_decode($requestPayload, true);
 if (json_last_error() !== JSON_ERROR_NONE || !is_array($data)) {
 	die("invalid json");
 }
+
+//check if gpt model is allowed
+$model_allowed = false;
+for($X = 0;;$X++){
+	$gpt_model=isset($env) ? ($env["GPT_MODEL$X"]??false) : getenv("GPT_MODEL$X");
+	if(!$gpt_model){
+		break;
+		}
+	$value =  explode(',', $gpt_model);
+	if($value[0] == $data['model']){
+		$model_allowed = true;
+	}
+}
+if(!$model_allowed){
+	http_response_code(401);
+	exit;
+}
+
 // check for additional query keys
 $keys = array_keys($data);
 $diff = array_diff($keys, ALLOWED_KEYS);
