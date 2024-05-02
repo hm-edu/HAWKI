@@ -8,13 +8,13 @@ function requestMessages() {
 
     let messages = [];
     // next answer is also counted towards token limit. "Depending on the model used, requests can use up to 4097 tokens shared between prompt and completion." 
-    var token_count = 1000;
+    let token_count = 1000;
 
-    var selectElement = document.getElementById("GPT-Model");
-    var selectedOption = selectElement.options[selectElement.selectedIndex];
-    var token_limit = selectedOption.getAttribute("token_limit");
+    let selectElement = document.getElementById("GPT-Model");
+    let selectedOption = selectElement.options[selectElement.selectedIndex];
+    let token_limit = selectedOption.getAttribute("token_limit");
     
-    for(var i = messageElements.length - 1; i >= 0; i--){
+    for(let i = messageElements.length - 1; i >= 0; i--){
         token_count += tiktoken.encode(messageElements[i].querySelector(".message-text").innerHTML).length;
         if (token_count > token_limit) {
             break;
