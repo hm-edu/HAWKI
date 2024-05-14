@@ -17,7 +17,7 @@ window.addEventListener('click', function(event) {
 
 // Function to handle intersection changes
 function handleIntersection(entries) {
-  var button = document.querySelector('.video-button');
+  let button = document.querySelector('.video-button');
   entries.forEach(function(entry) {
     if (entry.isIntersecting) {
        button.style.transform = 'translate(0%)';  // Show the button
@@ -28,8 +28,8 @@ function handleIntersection(entries) {
 }
 
 // Create a new Intersection Observer
-var container = document.querySelector('main ul');
-var observer = new IntersectionObserver(handleIntersection);
+let container = document.querySelector('main ul');
+let observer = new IntersectionObserver(handleIntersection);
 
 // Observe the container element
 observer.observe(container);
