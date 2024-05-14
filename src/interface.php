@@ -150,7 +150,10 @@ if (!isset($_SESSION['username'])) {
 		}
 		if ((isset($env) ? $env["Authentication"] : getenv("Authentication")) == "OIDC"){
 		echo "oidc_logout.php";
-		} else echo "logout.php" ?>>Abmelden (<?php echo $_SESSION['username']?>)</a>
+		} else {
+			echo "logout.php" ?>>Abmelden (<?php echo $_SESSION['username']?>)</a>
+			}
+			
 	  <br>
 	  <a href="/datenschutz" target="_blank">Datenschutz</a>
 	  <a href="/impressum" target="_blank">Impressum</a>
