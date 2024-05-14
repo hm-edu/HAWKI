@@ -103,7 +103,7 @@ a{
   background:#fff;
   color: #999;
   display:none; /* hide by default */
-  fonts-size: 0.64rem;
+  font-size: 0.64rem;
 }
 
 *[data-text]:focus:after {
@@ -298,6 +298,7 @@ a{
   padding: 1rem;
   outline: none;
   border: 0;
+  font: inherit;
   font-size: inherit;
   resize: none;
   height: min-content;
@@ -417,10 +418,10 @@ a{
   padding: 1rem;
   outline: none;
   border: 0;
+  font: inherit;
   font-size: inherit;
   resize: none;
   height: min-content;
-  font: inherit;
   
 }
 
