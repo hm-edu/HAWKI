@@ -46,7 +46,10 @@
 	<?php if (isset($_SESSION['csrf_token'])) : ?>
 		<meta name="csrf-token" content="<?php echo $_SESSION['csrf_token']; ?>">
 	<?php endif; ?>
-	<title>HAWKI</title>
+	<title>HM-KI</title>
+	
+	<link rel="shortcut icon" type="image/x-icon" href= <?php echo getenv("FAVICON_URI") ?> media="screen" />
+	<link rel="icon" type="image/x-icon" href=<?php echo getenv("FAVICON_URI") ?> media="screen" />
 
 
 	<link rel="stylesheet" href="/public/style/style.css">
@@ -85,9 +88,34 @@
 <div class="wrapper">
   	<div class="sidebar">
 		<div class="logo">
-			<img id="HAWK_logo" src="/public/img/logo.svg" alt="">
+			<img id="HAWK_logo" src=<?php echo getenv("LOGO"); ?> alt="">
 		</div>
 		<div class="menu">
+
+		<form>
+			<details>
+				<summary>
+					<h3><?php echo $translation["AI_Model_Selection"]; ?>
+					<svg viewBox="0 0 50 50"><path d="M 25 2 C 12.309295 2 2 12.309295 2 25 C 2 37.690705 12.309295 48 25 48 C 37.690705 48 48 37.690705 48 25 C 48 12.309295 37.690705 2 25 2 z M 25 4 C 36.609824 4 46 13.390176 46 25 C 46 36.609824 36.609824 46 25 46 C 13.390176 46 4 36.609824 4 25 C 4 13.390176 13.390176 4 25 4 z M 25 11 A 3 3 0 0 0 22 14 A 3 3 0 0 0 25 17 A 3 3 0 0 0 28 14 A 3 3 0 0 0 25 11 z M 21 21 L 21 23 L 22 23 L 23 23 L 23 36 L 22 36 L 21 36 L 21 38 L 22 38 L 23 38 L 27 38 L 28 38 L 29 38 L 29 36 L 28 36 L 27 36 L 27 21 L 26 21 L 22 21 L 21 21 z"/></svg>
+				</h3>
+				</summary>
+				<?php echo $translation["AI_Model_Selection_Info"]; ?>
+			</details>
+			<select id = "GPT-Model">
+				<?php
+					$options ="";
+					for($X = 0;;$X++){
+						$gpt_model=isset($env) ? ($env["GPT_MODEL$X"]??false) : getenv("GPT_MODEL$X");
+						if(!$gpt_model){
+							break;
+							}
+						$value =  explode(',', $gpt_model);
+						$options = $options . '<option value="' . $value[0] . '"token_limit="' . $value[1] . '">' . $value[2] . '</option>';
+						}
+					echo $options;
+				?>
+			</select>
+		</form>
 			<details>
 				<summary>
 					<h3><?php echo $translation["Conversation"]; ?>
@@ -178,8 +206,7 @@
 			</svg>
 		</div>
 		<div class="info">
-			<a href="#" id="feedback" onclick="load(this, 'feedback_loader.php')"><?php echo $translation["FeedBack"]; ?></a>
-			<a href="logout"><?php echo $translation["SignOut"]; ?></a>
+			<a href="logout"><?php echo $translation["SignOut"]; echo ("<br>(" . $_SESSION['username']. ")"); ?></a>
 			<br>
 			<!-- CHANGE THIS PART TO ONCLICK EVENT TO LOAD THE PAGE IN MESSAGES PANEL.
 				 DON'T FORGET TO ADD A PROPER PAGE IN VIEWS FOLDER. -->
@@ -234,26 +261,6 @@
 				<p id="system-prompt"></p>
 			</div>
 
-		</div>
-		<div class="betaMessage">
-			<?php echo $translation["BetaMessage"]; ?>
-		</div>
-	</div>
-
-
-	<div class="userpost-container">
-		<div class="userpost">
-			<div class="userpost-wrapper">
-				<textarea class="userpost-field" type="text" placeholder="<?php echo $translation["Feedback_Placeholder"]; ?>" oninput="resize(this)" onkeypress="handleKeydownUserPost(event)"></textarea>
-			</div>
-			<div class="userpost-send" onclick="send_feedback()">
-				<svg viewBox="2 2 21 21" width="80" height="80">
-					<g class="send-button" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-						<path d="M12,2c5.5,0,10,4.5,10,10s-4.5,10-10,10S2,17.5,2,12S6.5,2,12,2z"  />
-						<path d="M16,12l-4-4l-4,4 M12,16V8"/>
-					</g>
-				</svg>
-			</div>
 		</div>
 		<div class="betaMessage">
 			<?php echo $translation["BetaMessage"]; ?>
@@ -330,14 +337,6 @@
 		}
 	}
 
-	function handleKeydownUserPost(event){
-		if(isReceivingData) return;
-		if(event.key == "Enter" && !event.shiftKey){
-			event.preventDefault();
-			send_feedback();
-		}
-	}
-
 	function OnSendClick(){
 		if(!isReceivingData){
 			request();
@@ -375,8 +374,10 @@
 		document.querySelector('.limitations')?.remove();
 
 		const requestObject = {};
-		requestObject.model = 'gpt-4-turbo-preview';
+		requestObject.model = document.getElementById("GPT-Model").value || 'gpt-4o';
 		requestObject.stream = true;
+		requestObject.stream_options = {};
+		requestObject.stream_options.include_usage = true;
 		requestObject.messages = [];
 		const messageElements = messagesElement.querySelectorAll(".message");
 		messageElements.forEach(messageElement => {
@@ -386,6 +387,7 @@
 			requestObject.messages.push(messageObject);
 		})
 
+		console.log(requestObject)
 		
 		const streamAPI = "/api/stream-api";
 		postData(streamAPI, requestObject)
@@ -467,7 +469,7 @@
 					continue;
 				}
 				// end of inserted code
-
+				console.log(decodedData);
 				let chunks = decodedData.split("data: ");
 				chunks.forEach((chunk, index) => {
 
@@ -478,14 +480,17 @@
 					if(chunk.indexOf('DONE') > 0) return false;
 					if(chunk.indexOf('role') > 0) return false;
 					if(chunk.length == 0) return false;
-
-					document.querySelector(".message:last-child").querySelector(".message-text").innerHTML =  FormatChunk(JSON.parse(chunk)["choices"][0]["delta"].content);
-
+					if (JSON.parse(chunk)["choices"][0]){
+						document.querySelector(".message:last-child").querySelector(".message-text").innerHTML =  FormatChunk(JSON.parse(chunk)["choices"][0]["delta"].content);
+					}
 				})
 
 				FormatMathFormulas();
 
-				hljs.highlightAll();
+				//hljs.highlightAll();
+				document.querySelector(".message:last-child").querySelector(".message-text").querySelectorAll('pre code').forEach((block) => {
+                	hljs.highlightElement(block);
+            		});
 				scrollToLast();
 			}
 		} catch (error) {
@@ -514,7 +519,7 @@
 		if(message.role == "assistant"){
 			messageElement.querySelector(".message-icon").textContent = "AI";
 		}else{
-			messageElement.querySelector(".message-icon").textContent = '<?= htmlspecialchars($_SESSION['username']) ?>';
+			messageElement.querySelector(".message-icon").textContent = '<?= htmlspecialchars($_SESSION['initials']) ?>';
 			messageElement.querySelector(".message").classList.add("me");
 		}
 
@@ -650,106 +655,4 @@
 	}
 	//#endregion
 
-	//#region USER FEEDBACK
-	//----------------------------------------------------------------------------------------//
-	//save users feedback on server.
-	//other users can up or downvote othes feedback
-	async function send_feedback(){
-		const messagesElement = document.querySelector(".messages");
-		const inputField = document.querySelector(".userpost-field");
-
-		if(inputField.value == ''){
-			return;
-		}
-
-		let message = {};
-		message.role = '<?= htmlspecialchars($_SESSION['username']) ?>';
-		message.content = inputField.value.trim();
-
-		// const feedback_send = "../private/app/php/feedback_send.php";
-		const feedback_send = "/api/feedback_send"
-		const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-
-		fetch(feedback_send, {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json', // Set content type to application/json
-				'X-CSRF-TOKEN': csrfToken, // Include CSRF token in the request headers
-			},
-			body: JSON.stringify({message: message}),
-		})
-		.then(response => response.json())
-		.then(data => {
-			//UPDATE NEW TOKEN
-			document.querySelector('meta[name="csrf-token"]').setAttribute('content', data.csrf_token);
-
-			if(data.success){
-				load(document.querySelector("#feedback"), 'feedback_loader.php');
-				inputField.value = "";
-			}
-		})
-		.catch(error => console.error(error));
-	}
-
-	function SubmitVote(element, action) {
-		if (localStorage.getItem(element.dataset.id)) {
-			return;
-		}
-
-		const pureId = element.dataset.id.replace('.json', ''); // assuming all IDs end with '.json'
-		const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-		const submit_vote = "/api/submit_vote";
-
-		fetch(submit_vote, {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json', // Set content type to application/json
-				'X-CSRF-TOKEN': csrfToken, // Include CSRF token in the request headers
-			},
-			body: JSON.stringify({ id: pureId, action: action }), // Send the action and CSRF token in the request body
-		})
-		.then(response => {
-			if (!response.ok) {
-				throw new Error(`HTTP error! status: ${response.status}`);
-			}
-			return response.json();
-		})
-		.then(data => {
-
-			document.querySelector('meta[name="csrf-token"]').setAttribute('content', data.csrf_token);
-			if(data.success){
-
-				// Update the UI accordingly
-				if (action === "upvote") {
-					element.querySelector("span").textContent = data.content.up || 0; // Assuming 'data.up' contains the updated upvote count
-				}
-				if (action === "downvote") {
-					element.querySelector("span").textContent = data.content.down || 0; // Assuming 'data.down' contains the updated downvote count
-				}
-			}
-		})
-		.catch(error => {
-			console.error('Fetch error:', error);
-		});
-		localStorage.setItem(element.dataset.id, "true");
-
-		voteHover();
-	}
-
-	async function voteHover(){
-		let messages = document.querySelectorAll(".message");
-
-		messages.forEach((message)=>{
-			let voteButtons = message.querySelectorAll(".vote")
-
-			voteButtons.forEach((voteButton)=>{
-				if(localStorage.getItem(voteButton.dataset.id)){
-					voteButton.classList.remove("vote-hover");
-				}else{
-					voteButton.classList.add("vote-hover");
-				}
-			})
-		})
-	}
-	//#endregion
 </script>

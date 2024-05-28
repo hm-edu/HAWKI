@@ -58,10 +58,9 @@
             
             // *** ACTIVATES TEST ACCESS ***
             // Please set a unique test username and password in .env
-            if(isset($env['TESTUSER']) && isset($env['TESTPASSWORD']) &&
-                     !empty($env['TESTUSER']) && !empty($env['TESTPASSWORD']) &&
-                     $username == $env['TESTUSER'] && $password == $env['TESTPASSWORD']) {
-                $_SESSION['username'] = $env['TESTUSER'];
+            if(!empty(getenv('TESTUSER')) && !empty(getenv('TESTPASSWORD')) && 
+            $username == getenv('TESTUSER') && $password == getenv('TESTPASSWORD')) {
+                $_SESSION['username'] = getenv('TESTUSER');
                 $_SESSION['employeetype'] = "Tester";
                 return true;
             }
@@ -135,7 +134,7 @@
 
         // filter username to prevent unwanted inputs.
         $username = filter_var($_POST["account"], FILTER_UNSAFE_RAW);
-        $username = ldap_escape($username, "", LDAP_ESCAPE_FILTER);
+       // $username = ldap_escape($username, "", LDAP_ESCAPE_FILTER);
         
         // Use hashed password if LDAP Server is configured accordingly.
         // $password = password_hash($_POST["password"], PASSWORD_DEFAULT);

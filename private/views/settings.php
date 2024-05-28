@@ -34,15 +34,6 @@
                         <a class="language-btn" onclick="changeLanguage('en_US')" id="en_US_btn">
                             EN
                         </a>
-                        <a class="language-btn" onclick="changeLanguage('es_ES')" id="es_ES_btn">
-                            ES
-                        </a>
-                        <a class="language-btn" onclick="changeLanguage('fr_FR')" id="fr_FR_btn">
-                            FR
-                        </a>
-                        <a class="language-btn" onclick="changeLanguage('it_IT')" id="it_IT_btn">
-                            IT
-                        </a>
                     </div>
                 </div>
                 

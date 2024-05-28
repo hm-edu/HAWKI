@@ -17,17 +17,18 @@
 
     if (file_exists(ENV_FILE_PATH)){
         $env = parse_ini_file(ENV_FILE_PATH);
-        if($env['Authentication'] === 'Shibboleth'){
-            $redirect_uri = $env['SHIBBOLETH_LOGOUT_URL'];
-        }
-        elseif($env['Authentication'] === 'OIDC'){
-            $redirect_uri = $env['OIDC_LOGOUT_URI'];
-        }
-        else{
-            // Redirect to the login page
-            $redirect_uri ='/login';
-        }
     }
+    if(isset($env) ? $env['Authentication'] : getenv('Authentication') === 'Shibboleth'){
+        $redirect_uri = $env['SHIBBOLETH_LOGOUT_URL'];
+    }
+    elseif(isset($env) ? $env['Authentication'] : getenv('Authentication')  === 'OIDC'){
+        $redirect_uri = getenv('OIDC_LOGOUT_URI');
+    }
+    else{
+        // Redirect to the login page
+        $redirect_uri ='/login';
+    }
+
     header("Location: $redirect_uri");
     exit();
 
