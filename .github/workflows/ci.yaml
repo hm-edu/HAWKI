@@ -1,7 +1,6 @@
 on:
-  release:
-    types: [published]
-    branches: [main]
+  push:
+  pull_request:
 
 name: CI build
 jobs:
