@@ -519,7 +519,7 @@
 		if(message.role == "assistant"){
 			messageElement.querySelector(".message-icon").textContent = "AI";
 		}else{
-			messageElement.querySelector(".message-icon").textContent = '<?= htmlspecialchars($_SESSION['initials']) ?>';
+			messageElement.querySelector(".message-icon").textContent = '<?= htmlspecialchars(isset($_SESSION['initials']) ? $_SESSION['initials'] : $_SESSION['username'] ) ?>';
 			messageElement.querySelector(".message").classList.add("me");
 		}
 
