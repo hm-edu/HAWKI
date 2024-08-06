@@ -36,13 +36,9 @@ $apiKey = isset($env) ? $env['OPENAI_API_KEY'] : getenv('OPENAI_API_KEY');
 // Read the request payload from the client
 $requestPayload = file_get_contents('php://input');
 
-//set include_usage:true if not set in json
-$usage_pattern = '/"include_usage":true/';
-if(!preg_match($usage_pattern, $requestPayload)){
-	$requestPayload = json_decode($requestPayload, true);
-	$requestPayload['stream_options']['include_usage'] = true;
-	$requestPayload = json_encode($requestPayload);
-}
+$requestPayload = json_decode($requestPayload, true);
+$requestPayload['stream_options']['include_usage'] = true;
+$requestPayload = json_encode($requestPayload);
 //if environment variable = true
 check_token_limit();
 
