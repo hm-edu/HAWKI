@@ -43,6 +43,8 @@ if(!preg_match($usage_pattern, $requestPayload)){
 	$requestPayload['stream_options']['include_usage'] = true;
 	$requestPayload = json_encode($requestPayload);
 }
+//if environment variable = true
+check_token_limit();
 
 $ch = curl_init();
 curl_setopt($ch, CURLOPT_URL, $apiUrl);
@@ -117,4 +119,39 @@ function get_tokens($data){
 		}
 		
 	}
+}
+
+function check_token_limit(){
+	$host = getenv("DB_HOST");
+	$db = getenv("DB_DB");
+	$table = getenv('DB_TABLE');
+	$user = getenv("DB_USER");
+	$pass = getenv("DB_PASS");
+	$port = getenv("DB_PORT");
+	$dsn = "pgsql:host=$host;port=$port;dbname=$db";
+	$max_tokens = //environment variable
+
+	try {
+ 	   $pdo = new PDO($dsn, $user, $pass);
+ 	   $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+		// TODO: change query; last 3days
+	    $sql = "SELECT total_tokens FROM $table WHERE username = :username AND datum = :datum";
+	    $stmt = $pdo->prepare($sql);
+	    $stmt->bindParam(':username', $username);
+		$stmt->bindParam(':datum', $datum);
+		$username = $_SESSION['username'];
+		$datum = date("Y-m-d");
+	    $stmt->execute();
+	    $result = $stmt->fetch(PDO::FETCH_ASSOC);
+
+	    if ($result && $result['total_tokens'] >= $max_tokens) {
+	        error_log("Fehlermeldung: Die Gesamtzahl der Tokens überschreitet.");
+	        exit;
+	    }
+	} catch (PDOException $e) {
+	    error_log($e->getMessage());
+	    exit;
+	}
+
+
 }
