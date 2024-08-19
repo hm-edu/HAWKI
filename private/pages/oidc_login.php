@@ -30,16 +30,16 @@ $oidc->authenticate();
 $firstname = $oidc->requestUserInfo('given_name');
 $surname = $oidc->requestUserInfo('family_name');
 $initials = substr($firstname, 0, 1) . substr($surname, 0, 1);
-#
-$_SESSION['initials'] = $initials;
-
-$_SESSION['username'] = $oidc->requestUserInfo('email');
 
 //TODO: check for affiliation
 if ((isset($env) ? strtolower($env["Authentication"]) : strtolower(getenv("Authentication"))) == "you_shall_not_pass") {
     header("Location: /login");
     exit();
 }
+
+$_SESSION['initials'] = $initials;
+
+$_SESSION['username'] = $oidc->requestUserInfo('email');
 
 header("Location: /interface");
 exit();
