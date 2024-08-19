@@ -35,6 +35,11 @@ $_SESSION['initials'] = $initials;
 
 $_SESSION['username'] = $oidc->requestUserInfo('email');
 
+//TODO: check for affiliation
+if ((isset($env) ? strtolower($env["Authentication"]) : strtolower(getenv("Authentication"))) == "you_shall_not_pass") {
+    header("Location: /login")
+}
+
 header("Location: /interface");
 exit();
 

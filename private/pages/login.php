@@ -109,6 +109,11 @@
 									<button type="submit" name="submit">' . $translation['Login'] . '</button >
 								</form>';
 						}
+						if ((isset($env) ? strtolower($env["Authentication"]) : strtolower(getenv("Authentication"))) == "you_shall_not_pass") {
+							$login_available = true;
+							echo
+								'HM-KI ist im Wartungsmodus.';
+						}
 						if (!$login_available) {
 							echo 'No authentication method defined';
 							die;
