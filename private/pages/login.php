@@ -46,7 +46,10 @@
 			<meta name="csrf-token" content="<?php echo $_SESSION['csrf_token']; error_log($_SESSION['csrf_token']);?>">
 		<?php endif; ?>
 		
-		<title>HAWKI</title>
+		<title>HM-KI</title>
+
+		<link rel="shortcut icon" type="image/x-icon" href= <?php echo getenv("FAVICON_URI") ?> media="screen" />
+		<link rel="icon" type="image/x-icon" href=<?php echo getenv("FAVICON_URI") ?> media="screen" />
 
 		<link rel="stylesheet" href="public/style/style.css">
 		<link rel="stylesheet" href="public/style/login_style.css">
@@ -68,7 +71,16 @@
 			<div class= "sidebar">
 				
 				<div class="loginPanel">
-					<img id="HAWK_logo" src="public/img/logo.svg" alt="">
+				<img id="HAWK_logo" src=<?php 
+					if (file_exists(ENV_FILE_PATH)){
+						$env = parse_ini_file(ENV_FILE_PATH);
+					}
+					if (isset($env)) {
+						echo $env['LOGO'];
+					} else { echo getenv("LOGO"); 
+					}
+					?>
+					 alt="">
 					<h3><?php echo $translation["welcomeBackTitle"]; ?></h3>
 					<?php
 						if (file_exists(ENV_FILE_PATH)){
@@ -105,6 +117,11 @@
 									<button type="submit" name="submit">' . $translation['Login'] . '</button >
 								</form>';
 						}
+						if ((isset($env) ? strtolower($env["Authentication"]) : strtolower(getenv("Authentication"))) == "you_shall_not_pass") {
+							$login_available = true;
+							echo
+								'HM-KI ist im Wartungsmodus.';
+						}
 						if (!$login_available) {
 							echo 'No authentication method defined';
 							die;
@@ -134,9 +151,6 @@
 							<?php echo $translation['infoPanel_Content']; ?>
 						</div>
 					</div>
-					<form class="submitButtonPanel" target="_blank" action="https://elearning.hawk.de/de/ki-studium-und-lehre">
-						<button type="submit"><?php echo $translation["aiOverviewPage"]; ?></button>
-					</form>
 				</div>
 				<div class="backgroundImageContainer">
 					<video class="image_preview_container" src="public/img/HAWKIBG.m4v" type="video/m4v" preload = "none" autoplay loop muted></video>
@@ -175,7 +189,7 @@
 		.then(data => {
 			//Update Header CSRF.
 			document.querySelector('meta[name="csrf-token"]').setAttribute('content', data.csrf_token);
-
+			
 			if (data.success) {
 				window.location.href = 'interface';
 			} else {

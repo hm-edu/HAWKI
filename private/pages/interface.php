@@ -47,7 +47,10 @@
 	<?php if (isset($_SESSION['csrf_token'])) : ?>
 		<meta name="csrf-token" content="<?php echo $_SESSION['csrf_token']; ?>">
 	<?php endif; ?>
-	<title>HAWKI</title>
+	<title>HM-KI</title>
+	
+	<link rel="shortcut icon" type="image/x-icon" href= <?php echo getenv("FAVICON_URI") ?> media="screen" />
+	<link rel="icon" type="image/x-icon" href=<?php echo getenv("FAVICON_URI") ?> media="screen" />
 
 
 	<link rel="stylesheet" href="public/style/style.css">
@@ -91,7 +94,7 @@
 		<div class="wrapper">
 			<div class="sidebar">
 				<div class="logo">
-					<img id="HAWK_logo" src="public/img/logo.svg" alt="">
+					<img id="HAWK_logo" src="public/img/hm_logo.svg" alt="">
 				</div>
 				<div class="menu">
 					<details>
@@ -184,7 +187,10 @@
 					</svg>
 				</div>
 				<div class="info">
-					<a href="#" id="feedback" onclick="load(this, 'feedback_loader.php')"><?php echo $translation["FeedBack"]; ?></a>
+					<?php if (isset($env) ? array_key_exists("FEEDBACK_ACTIVATION", $env) && strtolower($env["FEEDBACK_ACTIVATION"]) === "true" : strtolower(getenv("FEEDBACK_ACTIVATION")) === "true"){
+						echo '<a href="#" id="feedback" onclick="load(this, "feedback_loader.php")">'. $translation["FeedBack"] . '</a>'; 
+					}?>
+						
 					<a href="logout"><?php echo $translation["SignOut"]; ?></a>
 					<br>
 					<!-- CHANGE THIS PART TO ONCLICK EVENT TO LOAD THE PAGE IN MESSAGES PANEL.
@@ -208,15 +214,25 @@
 					<div class="input-controlbar">
 						<?php
 							if(isset($env) ? array_key_exists("MODEL_SELECTOR_ACTIVATION", $env) && $env["MODEL_SELECTOR_ACTIVATION"] === "true" : strtolower(getenv("MODEL_SELECTOR_ACTIVATION")) === "true"){
-								echo
-									'<select id="model-selector" onchange="OnDropdownModelSelection()">
-										<option value="gpt-4o">OpenAI GPT-4o</option>
-										<option value="meta-llama-3.1-8b-instruct">meta-llama-3.1-8b-instruct</option>
-										<option value="meta-llama-3.1-70b-instruct">meta-llama-3.1-70b-instruct</option>
-										<option value="llama-3-sauerkrautlm-70b-instruct">Llama 3 70B Sauerkraut</option>
-										<option value="mixtral-8x7b-instruct">Mixtral-8x7b-instruct</option>
-										<option value="qwen2-72b-instruct">Qwen 2 72B Instruct</option>
-									</select>';
+								$model_selector = '<select id="model-selector" onchange="OnDropdownModelSelection(this)">';
+								$stream_api_models = explode(';', isset($env) ? $env["STREAM_API_MODELS"] : getenv("STREAM_API_MODELS"));
+								$gwdg_api_models = explode(';', isset($env) ? $env[""] : getenv(""));
+								$options = "";
+								foreach($stream_api_models as $model) {
+									$value = explode(',', $model);
+									$options = $options . '<option value="'.$value[0] .'" api=stream-api>' . $value[1] . '</option>';
+								}
+								foreach($gwdg_api_models as $model) {
+									if (strlen($model) < 1){
+										continue;
+									}
+									$value = explode(',', $model);
+									$options = $options . '<option value="'.$value[0] .'" api=gwdg-api>' . $value[1] . '</option>';
+								}
+								unset($model);
+								$options = $options . '</select>';
+								echo $model_selector . $options;
+
 							}
 							else{
 								echo '<div></div>';
@@ -298,11 +314,11 @@
 				</div>
 			</div>
 
-
-			<div class="userpost-container">
+			<?php if (isset($env) ? array_key_exists("FEEDBACK_ACTIVATION", $env) && strtolower($env["FEEDBACK_ACTIVATION"]) === "true" : strtolower(getenv("FEEDBACK_ACTIVATION")) === "true"){
+				echo '<div class="userpost-container">
 				<div class="userpost">
 					<div class="userpost-wrapper">
-						<textarea class="userpost-field" type="text" placeholder="<?php echo $translation["Feedback_Placeholder"]; ?>" oninput="resize(this)" onkeypress="handleKeydownUserPost(event)"></textarea>
+						<textarea class="userpost-field" type="text" placeholder="'.$translation["Feedback_Placeholder"] . '" oninput="resize(this)" onkeypress="handleKeydownUserPost(event)"></textarea>
 					</div>
 					<div class="userpost-send" onclick="send_feedback()">
 						<svg viewBox="2 2 21 21" width="80" height="80">
@@ -314,10 +330,10 @@
 					</div>
 				</div>
 				<div class="betaMessage">
-					<?php echo $translation["BetaMessage"]; ?>
+					'. $translation["BetaMessage"] .'
 				</div>
-			</div>
-
+			</div>';
+			}?>
 			<template id="message">
 				<div class="message">
 					<div class="message-content">
@@ -387,33 +403,40 @@
 	let activeModel = "gpt-4o";
 	let streamAPI = "";
 	window.addEventListener('DOMContentLoaded', (event) => {
+		const dropdown = document.getElementById('model-selector');
 		if(localStorage.getItem("definedModel")){
-			SwitchModel(localStorage.getItem("definedModel"));
+			 const value = localStorage.getItem("definedModel");
+			 const exists = Array.from(dropdown.options).some(option => option.value === value);
+			
+			 if (exists){
+				activeModel = value;
+			 }
+
+
 		}
-		else{
-			SwitchModel("gpt-4o");
-		}
-		document.getElementById("model-selector").value = activeModel;
+
+		dropdown.value = activeModel;
+		dropdown.dispatchEvent(new Event('change'));
     });
 
-	function OnDropdownModelSelection(){
-		const dropdown = document.getElementById("model-selector");
-		SwitchModel(dropdown.value);
+	function OnDropdownModelSelection(event){
+		
+		const dropdown = event.options[event.selectedIndex];
+		console.log(dropdown);
+		console.log(dropdown.getAttribute('api'));
+		SwitchModel(dropdown.getAttribute('api'));
+		activeModel=dropdown.value;
 		localStorage.setItem("definedModel", dropdown.value);
 	}
 
 	function SwitchModel(model){
-		activeModel = model;
-		switch(activeModel){
-			case('gpt-4o'):
+
+		switch(model){
+			case('stream-api'):
 				streamAPI = "api/stream-api";
 				break;
 
-			case('meta-llama-3.1-8b-instruct'):
-			case('meta-llama-3.1-70b-instruct'):
-			case('llama-3-sauerkrautlm-70b-instruct'):
-			case('mixtral-8x7b-instruct'):
-			case('qwen2-72b-instruct'):
+			case('gwdg-api'):
 				streamAPI = 'api/GWDG-api';
 				break;
 		}
@@ -427,14 +450,6 @@
 		if(event.key == "Enter" && !event.shiftKey){
 			event.preventDefault();
 			request();
-		}
-	}
-
-	function handleKeydownUserPost(event){
-		if(isReceivingData) return;
-		if(event.key == "Enter" && !event.shiftKey){
-			event.preventDefault();
-			send_feedback();
 		}
 	}
 
@@ -477,6 +492,8 @@
 		const requestObject = {};
 		requestObject.model = activeModel;
 		requestObject.stream = true;
+		requestObject.stream_options = {};
+		requestObject.stream_options.include_usage = true;
 		requestObject.messages = [];
 		const messageElements = messagesElement.querySelectorAll(".message");
 		messageElements.forEach(messageElement => {
@@ -486,7 +503,7 @@
 			requestObject.messages.push(messageObject);
 		})
 
-		
+		console.log(requestObject);
 
 		postData(streamAPI, requestObject)
 		.then(stream => processStream(stream))
@@ -572,7 +589,7 @@
 					continue;
 				}
 				// end of inserted code
-
+				//console.log(decodedData);
 				let chunks = decodedData.split("data: ");
 				chunks.forEach((chunk, index) => {
 
@@ -583,14 +600,18 @@
 					if(chunk.indexOf('DONE') > 0) return false;
 					if(chunk.indexOf('role') > 0) return false;
 					if(chunk.length == 0) return false;
-					
-					rawMsg += JSON.parse(chunk)["choices"][0]["delta"].content;
-					document.querySelector(".message:last-child").querySelector(".message-text").innerHTML =  FormatChunk(JSON.parse(chunk)["choices"][0]["delta"].content);
-
+					if (JSON.parse(chunk)["choices"][0]){
+						rawMsg += JSON.parse(chunk)["choices"][0]["delta"].content;
+						document.querySelector(".message:last-child").querySelector(".message-text").innerHTML =  FormatChunk(JSON.parse(chunk)["choices"][0]["delta"].content);
+					}
 				})
 
 				FormatMathFormulas();
-				hljs.highlightAll();
+
+				//hljs.highlightAll();
+				document.querySelector(".message:last-child").querySelector(".message-text").querySelectorAll('pre code').forEach((block) => {
+                	hljs.highlightElement(block);
+            		});
 				scrollToLast();
 			}
 		} catch (error) {
@@ -624,7 +645,7 @@
 		if(message.role == "assistant"){
 			messageElement.querySelector(".message-icon").textContent = "AI";
 		}else{
-			messageElement.querySelector(".message-icon").textContent = '<?= htmlspecialchars($_SESSION['username']) ?>';
+			messageElement.querySelector(".message-icon").textContent = '<?= htmlspecialchars(isset($_SESSION['initials']) ? $_SESSION['initials'] : $_SESSION['username'] ) ?>';
 			messageElement.querySelector(".message").classList.add("me");
 		}
 
@@ -783,107 +804,10 @@
 		return plainText;
 	}
 	//#endregion
-
-	//#region USER FEEDBACK
-	//----------------------------------------------------------------------------------------//
-	//save users feedback on server.
-	//other users can up or downvote othes feedback
-	async function send_feedback(){
-		const messagesElement = document.querySelector(".messages");
-		const inputField = document.querySelector(".userpost-field");
-
-		if(inputField.value == ''){
-			return;
-		}
-
-		let message = {};
-		message.role = '<?= htmlspecialchars($_SESSION['username']) ?>';
-		message.content = inputField.value.trim();
-
-		// const feedback_send = "../private/app/php/feedback_send.php";
-		const feedback_send = "api/feedback_send"
-		const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-
-		fetch(feedback_send, {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json', // Set content type to application/json
-				'X-CSRF-TOKEN': csrfToken, // Include CSRF token in the request headers
-			},
-			body: JSON.stringify({message: message}),
-		})
-		.then(response => response.json())
-		.then(data => {
-			//UPDATE NEW TOKEN
-			document.querySelector('meta[name="csrf-token"]').setAttribute('content', data.csrf_token);
-
-			if(data.success){
-				load(document.querySelector("#feedback"), 'feedback_loader.php');
-				inputField.value = "";
-			}
-		})
-		.catch(error => console.error(error));
-	}
-
-	function SubmitVote(element, action) {
-		if (localStorage.getItem(element.dataset.id)) {
-			return;
-		}
-
-		const pureId = element.dataset.id.replace('.json', ''); // assuming all IDs end with '.json'
-		const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-		const submit_vote = "api/submit_vote";
-
-		fetch(submit_vote, {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json', // Set content type to application/json
-				'X-CSRF-TOKEN': csrfToken, // Include CSRF token in the request headers
-			},
-			body: JSON.stringify({ id: pureId, action: action }), // Send the action and CSRF token in the request body
-		})
-		.then(response => {
-			if (!response.ok) {
-				throw new Error(`HTTP error! status: ${response.status}`);
-			}
-			return response.json();
-		})
-		.then(data => {
-
-			document.querySelector('meta[name="csrf-token"]').setAttribute('content', data.csrf_token);
-			if(data.success){
-
-				// Update the UI accordingly
-				if (action === "upvote") {
-					element.querySelector("span").textContent = data.content.up || 0; // Assuming 'data.up' contains the updated upvote count
-				}
-				if (action === "downvote") {
-					element.querySelector("span").textContent = data.content.down || 0; // Assuming 'data.down' contains the updated downvote count
-				}
-			}
-		})
-		.catch(error => {
-			console.error('Fetch error:', error);
-		});
-		localStorage.setItem(element.dataset.id, "true");
-
-		voteHover();
-	}
-
-	async function voteHover(){
-		let messages = document.querySelectorAll(".message");
-
-		messages.forEach((message)=>{
-			let voteButtons = message.querySelectorAll(".vote")
-
-			voteButtons.forEach((voteButton)=>{
-				if(localStorage.getItem(voteButton.dataset.id)){
-					voteButton.classList.remove("vote-hover");
-				}else{
-					voteButton.classList.add("vote-hover");
-				}
-			})
-		})
-	}
-	//#endregion
 </script>
+	<?php 
+		if (isset($env) ? array_key_exists("FEEDBACK_ACTIVATION", $env) && strtolower($env["FEEDBACK_ACTIVATION"]) === "true" : strtolower(getenv("FEEDBACK_ACTIVATION")) === "true"){
+			require_once LIBRARY_PATH . 'user_feedback.php';
+		}
+	?>
+
