@@ -43,7 +43,7 @@
                         <div class="darkMode-switch">
                             <div class="toggle-area"  onclick="SwitchDarkMode(true)">
                                 <div id="theme-toggle">
-                                    <img id="darkMode-switch-icon" src="/public/img/moon.svg" alt="HAWK Logo" width="20px">
+                                    <img id="darkMode-switch-icon" src="public/img/moon.svg" alt="HAWK Logo" width="20px">
                                 </div>
                             </div>
                         </div>

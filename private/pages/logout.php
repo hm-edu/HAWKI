@@ -14,23 +14,23 @@
     // Finally, destroy the session.
     session_destroy();
 
-
     if (file_exists(ENV_FILE_PATH)){
         $env = parse_ini_file(ENV_FILE_PATH);
     }
-    if(isset($env) ? $env['Authentication'] : getenv('Authentication') === 'Shibboleth'){
-        $redirect_uri = $env['SHIBBOLETH_LOGOUT_URL'];
+
+    $authentication = isset($env) ? $env["Authentication"] : getenv("Authentication");
+    if($authentication === 'Shibboleth'){
+        $redirect_uri = isset($env) ? $env["SHIBBOLETH_LOGOUT_URL"] : getenv("SHIBBOLETH_LOGOUT_URL");
     }
-    elseif(isset($env) ? $env['Authentication'] : getenv('Authentication')  === 'OIDC'){
-        $redirect_uri = getenv('OIDC_LOGOUT_URI');
+    elseif($authentication === 'OIDC'){
+        $redirect_uri = isset($env) ? $env["OIDC_LOGOUT_URI"] : getenv("OIDC_LOGOUT_URI");
     }
     else{
         // Redirect to the login page
-        $redirect_uri ='/login';
+        $redirect_uri ='login';
     }
 
     header("Location: $redirect_uri");
     exit();
-
 
 ?>
