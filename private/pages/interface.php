@@ -191,7 +191,7 @@
 						echo '<a href="#" id="feedback" onclick="load(this, "feedback_loader.php")">'. $translation["FeedBack"] . '</a>'; 
 					}?>
 						
-					<a href="logout"><?php echo $translation["SignOut"]; ?></a>
+					<a href="logout"><?php echo $translation["SignOut"] . "<br> (" . $_SESSION['username'] . ")"; ?></a>
 					<br>
 					<!-- CHANGE THIS PART TO ONCLICK EVENT TO LOAD THE PAGE IN MESSAGES PANEL.
 						DON'T FORGET TO ADD A PROPER PAGE IN VIEWS FOLDER. -->
@@ -422,8 +422,6 @@
 	function OnDropdownModelSelection(event){
 		
 		const dropdown = event.options[event.selectedIndex];
-		console.log(dropdown);
-		console.log(dropdown.getAttribute('api'));
 		SwitchModel(dropdown.getAttribute('api'));
 		activeModel=dropdown.value;
 		localStorage.setItem("definedModel", dropdown.value);
