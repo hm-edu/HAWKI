@@ -88,39 +88,94 @@ function get_tokens($data){
 		$completion_tokens = $json['usage']['completion_tokens'];
 		$total_tokens = $json['usage']['total_tokens'];
 
-		$host = getenv("DB_HOST");
-		$db = getenv("DB_DB");
-		$table = getenv('DB_TABLE');
-		$user = getenv("DB_USER");
-		$pass = getenv("DB_PASS");
-		$port = getenv("DB_PORT");
-		$dsn = "pgsql:host=$host;port=$port;dbname=$db";
-			try{
-				$pdo = new PDO($dsn, $user, $pass);
-				$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-				$sql = "INSERT INTO $table (username,datum,prompt_tokens,completion_tokens,total_tokens,model) VALUES(:username,:datum,:prompt,:completion,:total,:model) ON CONFLICT (username,datum,model) DO UPDATE SET prompt_tokens = $table.prompt_tokens + EXCLUDED.prompt_tokens, completion_tokens = $table.completion_tokens + EXCLUDED.completion_tokens, total_tokens = $table.total_tokens + EXCLUDED.total_tokens, model = $table.model;";
-				$stmt=$pdo->prepare($sql);
-				$stmt->bindParam(':username',$username);
-				$stmt->bindParam(':datum',$datum);
-				$stmt->bindParam(':prompt',$prompt);
-				$stmt->bindParam(':completion',$completion);
-				$stmt->bindParam(':total',$total);
-				$stmt->bindParam(':model',$model);
-
-				$username = $_SESSION['username'];
-				$datum = date("Y-m-d");
-				$prompt = $prompt_tokens;
-				$completion = $completion_tokens;
-				$total = $total_tokens;
-				global $requestPayload;
-				$model = json_decode($requestPayload, true)['model'];
-				$stmt->execute();
-
-			} catch (PDOException $e) {
-				error_log($e->getMessage(),0);
-			}
+		update_total_tokens($prompt_tokens, $completion_tokens, $total_tokens);
+		update_separated_token($prompt_tokens, $completion_tokens, $total_tokens);
 	}	
 	unset($jsonstring);
+}
+
+function update_total_tokens($prompt_tokens, $completion_tokens, $total_tokens){
+	$host = getenv("DB_HOST");
+	$db = getenv("DB_DB");
+	$table = getenv('DB_TABLE');
+	$user = getenv("DB_USER");
+	$pass = getenv("DB_PASS");
+	$port = getenv("DB_PORT");
+	$dsn = "pgsql:host=$host;port=$port;dbname=$db";
+		try{
+			$pdo = new PDO($dsn, $user, $pass);
+			$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+			$sql = "INSERT INTO $table (username,datum,prompt_tokens,completion_tokens,total_tokens,model) VALUES(:username,:datum,:prompt,:completion,:total,:model) ON CONFLICT (username,datum,model) DO UPDATE SET prompt_tokens = $table.prompt_tokens + EXCLUDED.prompt_tokens, completion_tokens = $table.completion_tokens + EXCLUDED.completion_tokens, total_tokens = $table.total_tokens + EXCLUDED.total_tokens, model = $table.model;";
+			$stmt=$pdo->prepare($sql);
+			$stmt->bindParam(':username',$username);
+			$stmt->bindParam(':datum',$datum);
+			$stmt->bindParam(':prompt',$prompt);
+			$stmt->bindParam(':completion',$completion);
+			$stmt->bindParam(':total',$total);
+			$stmt->bindParam(':model',$model);
+
+			$username = $_SESSION['username'];
+			$datum = date("Y-m-d");
+			$prompt = $prompt_tokens;
+			$completion = $completion_tokens;
+			$total = $total_tokens;
+			global $requestPayload;
+			$model = json_decode($requestPayload, true)['model'];
+			$stmt->execute();
+
+		} catch (PDOException $e) {
+			error_log($e->getMessage(),0);
+		}
+		
+}
+
+function update_separated_token($prompt_tokens, $completion_tokens, $total_tokens) {
+	$host = getenv("DB_HOST");
+	$db = getenv("DB_DB");
+	$table = getenv('DB_TABLE_SEPERATED');
+	$user = getenv("DB_USER");
+	$pass = getenv("DB_PASS");
+	$port = getenv("DB_PORT");
+	$dsn = "pgsql:host=$host;port=$port;dbname=$db";
+
+	try{
+		$pdo = new PDO($dsn, $user, $pass);
+		$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+		// get max count value
+		$sql = "SELECT MAX(count) AS count FROM $table WHERE username = :username AND datum = :datum";
+		$stmt=$pdo->prepare($sql);
+		$stmt->bindParam(':username',$username);
+		$stmt->bindParam(':datum',$datum);
+		$username = htmlspecialchars($_SESSION['username']);
+		$datum = date("Y-m-d");
+		$stmt->execute();
+		$result = $stmt->fetch(PDO::FETCH_ASSOC);
+		$count = $result['count'] ? $result['count'] +1 : 1;
+
+		// update database
+		$sql = "INSERT INTO $table (username,datum,prompt_tokens,completion_tokens,total_tokens,model,count) VALUES(:username,:datum,:prompt,:completion,:total,:model,:count)";
+		$stmt=$pdo->prepare($sql);
+		$stmt->bindParam(':username',$username);
+		$stmt->bindParam(':datum',$datum);
+		$stmt->bindParam(':prompt',$prompt);
+		$stmt->bindParam(':completion',$completion);
+		$stmt->bindParam(':total',$total);
+		$stmt->bindParam(':model',$model);
+		$stmt->bindParam(':count',$count);
+
+		$username = $_SESSION['username'];
+		$datum = date("Y-m-d");
+		$prompt = $prompt_tokens;
+		$completion = $completion_tokens;
+		$total = $total_tokens;
+		global $requestPayload;
+		$model = json_decode($requestPayload, true)['model'];
+		$stmt->execute();
+
+	} catch (PDOException $e) {
+		error_log($e->getMessage(),0);
+	}
+
 }
 
 function check_token_limit(){
