@@ -101,7 +101,7 @@ $userSpecificSalt = $encryptionSalt . $_SESSION['username'];
 
                     } else{
                         messageElement.querySelector(".message-text").innerHTML = message.content;
-                        messageElement.querySelector(".message-icon").textContent = '<?= htmlspecialchars($_SESSION['username']) ?>';
+                        messageElement.querySelector(".message-icon").textContent = '<?= htmlspecialchars(isset($_SESSION['initials']) ? $_SESSION['initials'] : $_SESSION['username']) ?>';
                         messageElement.querySelector(".message").classList.add("me");
                     }
 
