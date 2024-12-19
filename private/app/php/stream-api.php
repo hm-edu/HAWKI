@@ -5,6 +5,7 @@ if (!defined('BOOTSTRAP_PATH')) {
 }
 
 require_once BOOTSTRAP_PATH;
+require_once 'cache.php';
 
 session_start();
 if (!isset($_SESSION['username'])) {
@@ -179,7 +180,7 @@ function update_separated_token($prompt_tokens, $completion_tokens, $total_token
 }
 
 function check_token_limit(){
-	$max_tokens = getenv("TOKEN_LIMIT");
+	$max_tokens = get_token_limit();
 	if ($max_tokens <= 0) {
 		return;
 	}
