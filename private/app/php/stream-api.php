@@ -89,7 +89,7 @@ function get_tokens($data){
 		$completion_tokens = $json['usage']['completion_tokens'];
 		$total_tokens = $json['usage']['total_tokens'];
 
-		update_total_tokens($prompt_tokens, $completion_tokens, $total_tokens);
+		//update_total_tokens($prompt_tokens, $completion_tokens, $total_tokens);
 		update_separated_token($prompt_tokens, $completion_tokens, $total_tokens);
 	}	
 	unset($jsonstring);
@@ -187,7 +187,7 @@ function check_token_limit(){
 
 	$host = getenv("DB_HOST");
 	$db = getenv("DB_DB");
-	$table = getenv('DB_TABLE');
+	$table = getenv('DB_TABLE_SEPERATED');
 	$user = getenv("DB_USER");
 	$pass = getenv("DB_PASS");
 	$port = getenv("DB_PORT");
