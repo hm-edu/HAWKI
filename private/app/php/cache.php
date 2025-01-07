@@ -10,7 +10,7 @@ function get_token_limit(){
 		
 		apcu_store("update", true, 10);
 		usleep(100 * 1000); 
-		error_log("update cache");
+		//error_log("update cache");
 		update_cache();
 		apcu_delete("update");
 	}
