@@ -76,7 +76,7 @@
 		text = text.replace(/__(.*?)__/g, '<b>$1</b>');
 
 		// Replace only italic (*text* or _text_)
-		text = text.replace(/\*(.*?)\*/g, '<i>$1</i>');
+		//text = text.replace(/\*(.*?)\*/g, '<i>$1</i>'); //clashes with latex
 		//text = text.replace(/_(.*?)_/g, '<i>$1</i>'); //clashes with latex
 
 		// Replace Strikethrough
