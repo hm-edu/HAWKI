@@ -79,6 +79,12 @@
 		//text = text.replace(/\*(.*?)\*/g, '<i>$1</i>'); //clashes with latex
 		//text = text.replace(/_(.*?)_/g, '<i>$1</i>'); //clashes with latex
 
+		// \neq does not work with font
+		text = text.replace(/(\\\[.*?\\\])|(\\\(.*?\\\))/gs, (match) => {
+			return match.replace(/\\neq/g, '\\mathrel{\\char`≠}');
+		});
+		
+
 		// Replace Strikethrough
 		text = text.replace(/~~(.*?)~~/g, '<del>$1</del>');
 
