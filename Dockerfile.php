@@ -1,4 +1,4 @@
-FROM php:8.4-fpm-alpine AS build
+FROM php:8.4.7RC1-fpm-alpine AS build
 COPY . /var/www/html/
 ADD --chmod=0755 https://github.com/mlocati/docker-php-extension-installer/releases/download/2.7.7/install-php-extensions /usr/local/bin/
 RUN apk add --no-cache git libzip-dev zip \
@@ -8,9 +8,10 @@ RUN apk add --no-cache git libzip-dev zip \
     && mv composer.phar /usr/local/bin/composer \
     && composer install --no-cache \
     && install-php-extensions pdo pdo_pgsql apcu \
-    && rm /usr/local/etc/php/conf.d/docker-php-ext-zip.ini 
+    && rm /usr/local/etc/php/conf.d/docker-php-ext-zip.ini \
+    && mv custom-php.ini /usr/local/etc/php/conf.d/
 
-FROM php:8.4-fpm-alpine 
+FROM php:8.4.7RC1-fpm-alpine 
 WORKDIR /var/www/html
 COPY --from=build /var/www/html /var/www/html
 # pdo pdo_pgsql dependencies
