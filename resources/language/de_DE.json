@@ -7,6 +7,13 @@
     "PromptImprovement":"Promptverbesserung",
     "Upload": "Hochladen",
 
+    "Today": "Heute",
+    "Yesterday": "Gestern",
+
+    "Cnf_H_Confirm": "Bestätigen",
+    "Cnf_H_Warning": "Achtung",
+    "Cnf_H_Error": "Fehler!",
+    "Cnf_H_Info": "Info:",
 
     "Cnf_deleteConv": "Möchtest du dieses Gespräch wirklich löschen?",
     "Cnf_deleteFile": "Möchtest du diese Datei wirklich löschen? Diese Aktion kann nicht rückgängig gemacht werden!",

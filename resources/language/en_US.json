@@ -8,6 +8,15 @@
     "PromptImprovement":"Prompt Improvement",
     "Upload": "Upload",
 
+    "Today": "Today",
+    "Yesterday": "Yesterday",
+
+    "Cnf_H_Confirm": "Confirm",
+    "Cnf_H_Warning": "Warning",
+    "Cnf_H_Error": "Error!",
+    "Cnf_H_Info": "Info:",
+
+
     "Cnf_deleteConv":"Do you really want to delete this Conversation?",
     "Cnf_deleteFile": "Do you really want to delete this Conversation? This action is not reversible!",
 

@@ -36,7 +36,21 @@ function convertChatlogToJson(){
 
 
 function exportAsJson() {
-    const messages = convertChatlogToJson();  // Get the messages list
+    let messages = [];
+    const systemPromptTxt = document.querySelector('#system_prompt_field').textContent;
+
+    messages.push({
+        id: '0.000',
+        author: 'system',
+        role: 'system',
+        content: systemPromptTxt,
+        timestamp: null,
+        model: null
+    });
+
+    messages= messages.concat(convertChatlogToJson());  // Get the messages list
+
+
     const jsonContent = JSON.stringify(messages, null, 2);  // Convert to JSON string
 
     // Create a Blob from the JSON string
@@ -63,6 +77,7 @@ function exportAsCsv() {
         console.log("No data to export");
         return;
     }
+
 
     // Define headers explicitly
     const headers = ["id", "author", "role", "content", "timestamp", "model", "attachments"];

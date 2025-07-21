@@ -28,8 +28,8 @@
     const ModalType = {
         CONFIRM: { header: 'Confirm' },
         WARNING: { header: 'Warning!' },
-        ERROR: { header: 'Error!!!' },
-        INFO: { header: 'Info:' },
+        ERROR: { header: 'Error' },
+        INFO: { header: 'Info' },
     };
 
 
@@ -42,7 +42,8 @@
 
         // Set the message in the h3 tag
         if(!header){
-            document.getElementById("modal-header").innerHTML = `${modalType.header}`;
+            const key = `Cnf_H_${modalType.header}`;
+            document.getElementById("modal-header").innerHTML = translation[key];
         }
         else{
             document.getElementById("modal-header").innerHTML = header;

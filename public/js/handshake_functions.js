@@ -8,6 +8,7 @@ function switchSlide(targetIndex) {
         previousSlide.style.opacity = "0";
     }
 
+    const backBtn = document.querySelector('.slide-back-btn');
     setTimeout(() => {
         if (previousSlide) {
             previousSlide.style.display = "none";

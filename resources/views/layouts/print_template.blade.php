@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html class="lightMode">
+<html class="lightMode" lang="{{ Session::get('language')['Content-Language'] }}">
 <head>
 
 	<meta charset="UTF-8">

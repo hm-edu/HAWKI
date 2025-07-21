@@ -5,6 +5,8 @@
 /* SECTION: GENERALS */
 * {
     scrollbar-width: 0px;
+    scrollbar-width: thin;
+    scrollbar-color: #cbcbcb transparent;
     -ms-overflow-style: none;
     font-family: "Fira Sans", sans-serif;
     line-height: 1.5;
@@ -115,7 +117,7 @@ label{
 } */
 
 
-
+:mo
 
 .text-input::-webkit-scrollbar{
     width: 0px;

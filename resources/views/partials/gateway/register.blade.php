@@ -120,7 +120,7 @@
     </div>
 
 </div>
-<div class="slide-back-btn" onclick="switchBackSlide()">
+<div class="slide-back-btn" onclick="switchBackSlide()" style="display: none">
     <x-icon name="chevron-left"/>
 </div>
 @include('partials.home.modals.confirm-modal')

@@ -18,7 +18,7 @@
 
                 <div class="">
                     <div class="chat-name-panel text-cont">
-                        <h1 class="text-field zero-v-margin" id="profile-name"></h1>
+                        <h1 class="text-field zero-v-margin singleLineTextarea" id="profile-name"></h1>
                         @include('partials.home.components.edit-panel', ['rightOut' => true, 'callbackFunction' => 'updateUserInformation'])
                     </div>
 
