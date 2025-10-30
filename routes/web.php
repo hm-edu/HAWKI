@@ -15,6 +15,8 @@ use App\Http\Controllers\StreamController;
 use App\Http\Controllers\SearchController;
 use App\Http\Controllers\ProfileController;
 
+use App\Http\Controllers\StreamControllerLimit;
+
 use App\Http\Middleware\RegistrationAccess;
 use App\Http\Middleware\AdminAccess;
 use App\Http\Middleware\EditorAccess;
@@ -30,6 +32,7 @@ Route::middleware('prevent_back')->group(function () {
     Route::post('/req/login-ldap', [AuthenticationController::class, 'ldapLogin']);
     Route::post('/req/login-shibboleth', [AuthenticationController::class, 'shibbolethLogin']);
     Route::post('/req/login-oidc', [AuthenticationController::class, 'openIDLogin']);
+    Route::get('/req/login-oidc', [AuthenticationController::class, 'openIDLogin']); 
     
     
     Route::post('/req/changeLanguage', [LanguageController::class, 'changeLanguage']);
@@ -124,7 +127,8 @@ Route::middleware('prevent_back')->group(function () {
     
     
         // AI RELATED ROUTES
-        Route::post('/req/streamAI', [StreamController::class, 'handleAiConnectionRequest']);
+        //Route::post('/req/streamAI', [StreamController::class, 'handleAiConnectionRequest']);
+        Route::post('/req/streamAI', [StreamControllerLimit::class, 'handleAiConnectionRequest']);
     
         Route::get('/req/search', [SearchController::class, 'search']);
     
