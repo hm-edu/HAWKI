@@ -22,7 +22,7 @@
 
                         <div class="prop-panel-titles">
                             <div class="chat-name-panel text-cont">
-                                <h1 class="text-field chat-name singleLineTextarea zero-v-margin" id="chat-name"></h1>
+                                <h1 class="text-field chat-name zero-v-margin" id="chat-name"></h1>
 
                                 @include('partials.home.components.edit-panel', ['rightOut' => true, 'callbackFunction'=>'submitInfoField'])
                             </div>

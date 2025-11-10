@@ -16,15 +16,26 @@
     "Cnf_H_Info": "Info:",
 
     "Cnf_deleteConv": "Möchtest du dieses Gespräch wirklich löschen?",
+    "Cnf_deleteFile": "Möchtest du diese Datei wirklich löschen? Diese Aktion kann nicht rückgängig gemacht werden!",
     "Cnf_deleteRoom": "Möchtest du diesen Raum wirklich löschen?",
     "Cnf_leaveRoom": "Möchtest du diesen Raum wirklich verlassen?",
     "Cnf_removeMember": "Möchtest du dieses Mitglied wirklich entfernen?",
+    "Cnf_checkMembersAdded": "Bitte fügen Sie mindestens ein Mitglied hinzu.",
 
     "Cnf_tokenMsg1": "Bitte bewahre diesen Token sicher auf und verwende ihn mit Bedacht, um dein Konto zu schützen. Wenn HAWKI verdächtiges Verhalten feststellt, wird dieser Token widerrufen.",
     "Cnf_tokenMsg2": "Sobald du dieses Fenster schließt, kannst du diesen Schlüssel nicht mehr erneut abrufen.",
     "Cnf_tokenMsgSuccess": "Token erfolgreich erstellt",
     "Cnf_tokenRevoke": "Bist du sicher, dass du den Token widerrufen möchtest?",
     "Cnf_passkeyRemove": "Durch die Bestätigung werden dein Passwort und deine Schlüsselbunddaten aus diesem Browser entfernt. Bitte beachte, dass wir derzeit keine Lösungen zur Wiederherstellung von Passwörtern anbieten. <br> <b>Bitte stelle sicher, dass du eine sichere Sicherung deines Passworts hast, bevor du fortfährst.<b>",
+
+    "Cnf_RemoveFile":"Möchtest du diese Datei wirklich löschen?",
+    "Cnf_checkMembersAdded": "Bitte fügen Sie mindestens ein Mitglied hinzu.",
+
+    "Logout_Warning":"Um HAWKI weiterhin zu nutzen, müssen Sie diese Bedingungen akzeptieren.<strong>Klicken Sie auf „Bestätigen“, um sich von HAWKI abzumelden.</strong>",
+
+    "Input_Err_UploadFailed": "Fehler beim Hochladen der Datei!",
+    "Input_Err_NotSupported": "Dateityp wird nicht unterstützt:",
+    "Input_Err_MaxSize": "Dateigröße überschreitet das zulässige Maximum.",
 
     "Exp_Title":"SESSION-TIMEOUT",
     "Exp_MSG":"Bitte logg dich erneut ein!",
@@ -56,6 +67,10 @@
     "Copied": "Kopiert!",
     "CopiedToolTip": "Kopiert!",
     "CopyToolTip": "Kopieren",
+    "EditToolTip": "Bearbeiten",
+    "SpeakToolTip": "Vorlesen",
+    "RegenerateToolTip": "Regenerieren",
+    "ThreadToolTip": "Thread öffnen",
     "CreateARoom": "Einen Raum erstellen",
     "CreateRoom": "Raum erstellen",
     "CreateToken": "Create New Token",
@@ -65,6 +80,7 @@
     "Description": "Beschreibung",
     "Download": "herunterladen",
     "Export": "Exportieren",
+    "WebSearch":"Web Suche",
     "ExtAccToken": "Externe Zugangstoken",
     "General": "Allgemein",
     "History": "Verlauf",
@@ -76,12 +92,13 @@
     "HS_PasskeyIs": "Dein Datakey ist:",
     "HS_ResetProfile": "Profil zurücksetzen",
 
+    "HS_RepeatPassKey": "Bitte wiederhole das Datakey.",
+    "HS_DifferentEntries": "Die Eingaben sind nicht gleich!",
+
     "HS_LostBothT": "Hast du sowohl deinen Datakey als auch den Wiederherstellungscode verloren?",
     "HS_LostBothB": "Leider können wir, wenn du sowohl deinen Datakey als auch den Wiederherstellungscode verloren hast, deine Profildaten nicht wiederherstellen. Um fortzufahren, müssen wir dein Profil zurücksetzen und dir einen neuen Zugang gewähren. Dadurch werden alle deine vorherigen Daten, einschließlich aller Chats und Räume, entfernt. Möchtest du fortfahren?",
 
-    "HS_EnterPassKey": "Bitte gebe ein Datakey ein.",
-    "HS_PasskeyRepeat": "Bitte wiederhole das Datakey.",
-    "HS_DifPasskey": "Die Eingaben sind nicht gleich.",
+    "HS_Allowed_PK_Characters": "Erlaubte Zeichen: A–Z, a–z, 0–9 sowie ! @ # $ % ^ & * ( ) _ + -",
 
 
     "ImgUpload": "Bild hochladen",
@@ -141,5 +158,6 @@
     "PH_ChooseDescription": "Beschreibung eingeben",
     "PH_SystemPrompt": "Gebe deine bevorzugte Systemprompt ein",
     "PH_SearchBar": "Name, Benutzername oder E-Mail eingeben",
-    "Api_Warning": "Um die Sprachmodelle von HAWKI auch in anderen Anwendungen nutzen zu können, kann ein eigener API-Schlüssel generiert werden. Schreibe dazu eine E-Mail an deine IT, die den API-Key für dich generieren und dir zusenden wird."
+    "Api_Warning": "Um die Sprachmodelle von HAWKI auch in anderen Anwendungen nutzen zu können, kann ein eigener API-Schlüssel generiert werden. Schreibe dazu eine E-Mail an deine IT, die den API-Key für dich generieren und dir zusenden wird.",
+    "UploadFile": "Datei hochladen"
 }
