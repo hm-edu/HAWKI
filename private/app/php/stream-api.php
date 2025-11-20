@@ -74,7 +74,7 @@ if (curl_errno($ch)) {
 	echo 'Error:' . curl_error($ch);
 }
 
-curl_close($ch);
+unset($ch);
 
 
 function get_tokens($data){

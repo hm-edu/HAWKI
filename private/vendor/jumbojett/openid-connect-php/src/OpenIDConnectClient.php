@@ -1496,7 +1496,7 @@ class OpenIDConnectClient
         }
 
         // Close the cURL resource, and free system resources
-        curl_close($ch);
+        unset($ch);
 
         return $output;
     }
