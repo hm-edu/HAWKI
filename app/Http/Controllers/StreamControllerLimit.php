@@ -4,23 +4,18 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\RoomController;
 
-use App\Models\User;
-use App\Models\Room;
-use App\Models\Message;
-use App\Models\Member;
-
-
-use App\Services\AI\UsageAnalyzerService;
-use App\Services\AI\AIConnectionService;
-use App\Services\AI\AIProviderFactory;
-
-use App\Jobs\SendMessage;
 use App\Events\RoomMessageEvent;
+use App\Jobs\SendMessage;
 
+use App\Models\Room;
+use App\Models\User;
+use App\Services\AI\AiService;
+use App\Services\AI\UsageAnalyzerService;
+use App\Services\AI\Value\AiResponse;
+use App\Services\Chat\Message\MessageHandlerFactory;
+use App\Services\Storage\AvatarStorageService;
+use Hawk\HawkiCrypto\SymmetricCrypto;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
 
@@ -32,8 +27,13 @@ class StreamControllerLimit extends StreamController
     protected $aiFormatter;
 
     public function __construct( UsageAnalyzerService $usageAnalyzer,
-                                AIConnectionService $aiConnection){
-        parent::__construct( $usageAnalyzer, $aiConnection);
+                                AiService            $aiService,
+                                AvatarStorageService $avatarStorage,
+                                LanguageController $languageController
+                                ){
+        $this->languageController = $languageController;
+        $this->avatarStorage = $avatarStorage;
+        parent::__construct( $usageAnalyzer, $aiService, $avatarStorage);
     }
 
 
@@ -41,8 +41,10 @@ class StreamControllerLimit extends StreamController
     public function handleAiConnectionRequest(Request $request)
     {
 
-        $user = User::find(1); // HAWKI user 
-        $avatar_url = $user->avatar_id !== '' ? Storage::disk('public')->url('profile_avatars/' . $user->avatar_id) : null;
+        $hawki  = User::find(1); // HAWKI user 
+        $avatar_url = $this->avatarStorage->getUrl('profile_avatars',
+                                            $hawki->username,
+                                            $hawki->avatar_id);
 
 
         
@@ -56,7 +58,7 @@ class StreamControllerLimit extends StreamController
             parent::handleAiConnectionRequest($request);
         }
         
-
+        $translation = $this->languageController->getTranslation();
         $message = $translation["test"];
             $content = ['content' => [
                 'text' => $message,
@@ -65,12 +67,12 @@ class StreamControllerLimit extends StreamController
 
             if ($request['payload']['stream']){
 
-                return response()->stream(function () use ($user, $avatar_url, $request, $content){
+                return response()->stream(function () use ($hawki, $avatar_url, $request, $content){
 
                     $messageData = [
                         'author' => [
-                            'username' => $user->username,
-                            'name' => $user->name,
+                            'username' => $hawki->username,
+                            'name' => $hawki->name,
                             'avatar_url' => $avatar_url,
                         ],
                         'model' => $request['payload']['model'],
@@ -83,8 +85,8 @@ class StreamControllerLimit extends StreamController
 
                     $messagefinal = [
                         'author' => [
-                            'username' => $user->username,
-                            'name' => $user->name,
+                            'username' => $hawki->username,
+                            'name' => $hawki->name,
                             'avatar_url' => $avatar_url,
                         ],
                         'model' => $request['payload']['model'],
@@ -107,7 +109,7 @@ class StreamControllerLimit extends StreamController
             return response()->json([
                 'author' => [
                         'username' => 'test',
-                        'name' => '$user->name',
+                        'name' => '$hawki->name',
                         'avatar_url' => $avatar_url,
                         ],
                 'model' => $request['payload']['model'],
@@ -133,9 +135,9 @@ class StreamControllerLimit extends StreamController
 
 
 
-        Log::info('My DBquery:' . ($result->total ?? "0"));
+//        Log::info('My DBquery:' . ($result->total ?? "0"));
 
-        $Limit = env('LIMIT','');
+        $Limit = env('LIMIT','');        
 
         if ( is_null($result->total) || $result->total <= $Limit){
             return false;
