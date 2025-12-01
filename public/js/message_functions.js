@@ -326,9 +326,9 @@ function setDateSpan(activeThread, msgDate, formatDay = true){
         const yesterday = new Date();
         yesterday.setDate(today.getDate() - 1);
         if (msgDateObj.toDateString() === today.toDateString()) {
-            dateText = translation.today;
+            dateText = translation.Today;
         } else if (msgDateObj.toDateString() === yesterday.toDateString()) {
-            dateText = translation.yesterday;
+            dateText = translation.Yesterday;
         } else {
             const formattedDate = `${msgDateObj.getDate()}.${msgDateObj.getMonth()+1}.${msgDateObj.getFullYear()}`
             dateText = formattedDate;
@@ -382,6 +382,7 @@ function setDateSpan(activeThread, msgDate, formatDay = true){
 
 
 function deconstContent(inputContent){
+
     let messageText = '';
     let groundingMetadata = '';
 
@@ -398,12 +399,7 @@ function deconstContent(inputContent){
         }
     }
     else{
-        if(inputContent.text){
-            messageText = inputContent.text;
-        }
-        else{
-            messageText = inputContent;
-        }
+        messageText = inputContent;
     }
 
     return {
