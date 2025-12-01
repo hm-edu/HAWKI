@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html class="lightMode" lang="{{ Session::get('language')['Content-Language'] }}">
+<html class="lightMode">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no">
@@ -17,6 +17,7 @@
     <script src="{{ asset('js/encryption.js') }}"></script>
     <script src="{{ asset('js/settings_functions.js') }}"></script>
     <script src="{{ asset('js/announcements.js') }}"></script>
+    <script src="{{ asset('js/passkeyInputs.js') }}"></script>
     @vite('resources/js/app.js')
 
 	{!! $settingsPanel !!}
