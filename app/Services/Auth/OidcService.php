@@ -17,6 +17,8 @@ use Psr\Log\LoggerInterface;
 use SensitiveParameter;
 use Symfony\Component\HttpFoundation\Response;
 
+use Illuminate\Support\Facades\Log;
+
 #[Singleton]
 readonly class OidcService implements AuthServiceInterface, AuthServiceWithLogoutRedirectInterface
 {
@@ -69,6 +71,9 @@ readonly class OidcService implements AuthServiceInterface, AuthServiceWithLogou
         }
 
         try {
+            //$test = $this->getEmployeetypeOrFail($oidc, $this->employeeTypeAttribute);
+            //Log::info('empl Return:' . $test);
+            
             return new AuthenticatedUserInfo(
                 username: $this->getUserInfoOrFail($oidc, $this->usernameAttribute),
                 displayName: DisplayNameBuilder::build(
@@ -77,7 +82,7 @@ readonly class OidcService implements AuthServiceInterface, AuthServiceWithLogou
                     logger: $this->logger
                 ),
                 email: $this->getUserInfoOrFail($oidc, $this->emailAttribute),
-                employeeType: $this->getUserInfoOrFail($oidc, $this->employeeTypeAttribute),
+                employeeType: $this->getEmployeetypeOrFail($oidc, $this->employeeTypeAttribute),
             );
         } catch (\Exception $e) {
             throw new AuthFailedException('Failed to resolve userdata for OIDC auth', 500, $e);
@@ -116,6 +121,29 @@ readonly class OidcService implements AuthServiceInterface, AuthServiceWithLogou
         if (!is_string($value)) {
             throw new \RuntimeException("OIDC: User info attribute '{$var}' is not a string.");
         }
+        return $value;
+    }
+    private function getEmployeetypeOrFail(OpenIDConnectClient $oidc, string $var): string
+    {
+        $values = $oidc->requestUserInfo($var); 
+        switch (true){
+            case in_array("employee@hm.edu", $values):
+                $value = "employee";
+                break;
+            case in_array("student@hm.edu", $values):
+                $value = "student";
+                break;
+            //case in_array()
+            default:
+                $value = null;
+        }
+        if (empty($value)) {
+            throw new \RuntimeException("OIDC: User info attribute '{$var}' is missing or empty.");
+        }
+        if (!is_string($value)) {
+            throw new \RuntimeException("OIDC: User info attribute '{$var}' is not a string.");
+        }
+
         return $value;
     }
 }
