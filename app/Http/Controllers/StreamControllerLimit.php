@@ -21,6 +21,7 @@ use Illuminate\Validation\ValidationException;
 
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Log;
 
 class StreamControllerLimit extends StreamController
 {
@@ -55,46 +56,49 @@ class StreamControllerLimit extends StreamController
         }
 
         if(!$reachedLimit){
-            parent::handleAiConnectionRequest($request);
+           parent::handleAiConnectionRequest($request);
         }
         
         $translation = $this->languageController->getTranslation();
         $message = $translation["test"];
-            $content = ['content' => [
-                'text' => $message,
-                ],
-            ];
+        $content = ['content' => [
+            'text' => $message,
+            ],
+        ];
+        if ($request['broadcast']){
+            $this->handleGroupChatRequest($request, $content);
+            return null;
+        }
 
-            if ($request['payload']['stream']){
+        if ($request['payload']['stream']){
 
-                return response()->stream(function () use ($hawki, $avatar_url, $request, $content){
+            return response()->stream(function () use ($hawki, $avatar_url, $request, $content){
+                $messageData = [
+                    'author' => [
+                    'username' => $hawki->username,
+                        'name' => $hawki->name,
+                        'avatar_url' => $avatar_url,
+                    ],
+                    'model' => $request['payload']['model'],
+                    'isDone' => false,
+                    'content' => json_encode($content['content'])
+                ];
+                //Log::info('My Return:' . json_encode($messageData));
+                echo json_encode($messageData) . "\n";
 
-                    $messageData = [
-                        'author' => [
-                            'username' => $hawki->username,
-                            'name' => $hawki->name,
-                            'avatar_url' => $avatar_url,
-                        ],
-                        'model' => $request['payload']['model'],
-                        'isDone' => false,
-                        'content' => $content['content'],
-                    ];
-                    //Log::info('My Return:' . json_encode($messageData));
-                    echo json_encode($messageData) . "\n";
 
-
-                    $messagefinal = [
-                        'author' => [
-                            'username' => $hawki->username,
-                            'name' => $hawki->name,
-                            'avatar_url' => $avatar_url,
-                        ],
-                        'model' => $request['payload']['model'],
-                        'isDone' => true,
-                        'content' => json_encode($content['content'])
-                    ];
-                    //Log::info('My Return:' . json_encode($messagefinal));
-                    echo json_encode($messagefinal) . "\n";
+                $messagefinal = [
+                    'author' => [
+                        'username' => $hawki->username,
+                        'name' => $hawki->name,
+                        'avatar_url' => $avatar_url,
+                    ],
+                    'model' => $request['payload']['model'],
+                    'isDone' => true,
+                    'content' => ''
+                ];
+                //Log::info('My Return:' . json_encode($messagefinal));
+                echo json_encode($messagefinal) . "\n";
 
 
                 },200, [            
@@ -135,7 +139,7 @@ class StreamControllerLimit extends StreamController
 
 
 
-//        Log::info('My DBquery:' . ($result->total ?? "0"));
+        //Log::info('My DBquery:' . ($result->total ?? "0"));
 
         $Limit = env('LIMIT','');        
 
@@ -144,6 +148,81 @@ class StreamControllerLimit extends StreamController
         }
 
         return true;
+    }
+
+    private function handleGroupChatRequest(request $data, array $content): void
+    {
+        $isUpdate = (bool) ($data['isUpdate'] ?? false);
+        $room = Room::where('slug', $data['slug'])->firstOrFail();
+
+        // Broadcast initial generation status
+        $generationStatus = [
+            'type' => 'status',
+            'data' => [
+                'slug' => $room->slug,
+                'isGenerating' => true,
+                'model' => $data['payload']['model']
+            ]
+        ];
+        broadcast(new RoomMessageEvent($generationStatus));
+
+        // Process the request
+        $response = $content;
+
+        $crypto = new SymmetricCrypto();
+        $encryptedData = $crypto->encrypt($response['content']['text'],
+                                          base64_decode($data['key']));
+
+        // Store message
+        $messageHandler = MessageHandlerFactory::create('group');
+        $member = $room->members()->where('user_id', 1)->firstOrFail();
+
+        if ($isUpdate) {
+            $message = $messageHandler->update($room, [
+                'message_id' => $data['messageId'],
+                'model' => $data['payload']['model'],
+                'content' => [
+                    'text' => [
+                        'ciphertext' => base64_encode($encryptedData->ciphertext),
+                        'iv' => base64_encode($encryptedData->iv),
+                        'tag' => base64_encode($encryptedData->tag),
+                    ]
+                ]
+            ]);
+        } else {
+            $message = $messageHandler->create($room, [
+                'threadId' => $data['threadIndex'],
+                'member' => $member,
+                'message_role'=> 'assistant',
+                'model'=> $data['payload']['model'],
+                'content' => [
+                    'text' => [
+                        'ciphertext' => base64_encode($encryptedData->ciphertext),
+                        'iv' => base64_encode($encryptedData->iv),
+                        'tag' => base64_encode($encryptedData->tag),
+                    ]
+                ]
+            ]);
+        }
+
+
+        $broadcastObject = [
+            'slug' => $room->slug,
+            'message_id'=> $message->message_id,
+        ];
+        SendMessage::dispatch($broadcastObject, $isUpdate)->onQueue('message_broadcast');
+
+        // Update and broadcast final generation status
+        $generationStatus = [
+            'type' => 'status',
+            'data' => [
+                'slug' => $room->slug,
+                'isGenerating' => false,
+                'model' => $data['payload']['model']
+            ]
+        ];
+
+        broadcast(new RoomMessageEvent($generationStatus));
     }
 
 
