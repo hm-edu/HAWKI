@@ -1,6 +1,6 @@
 FROM php:8.5.2-fpm-alpine AS build
 COPY . /var/www/html/
-ADD --chmod=0755 https://github.com/mlocati/docker-php-extension-installer/releases/download/2.7.7/install-php-extensions /usr/local/bin/
+ADD --chmod=0755 https://github.com/mlocati/docker-php-extension-installer/releases/download/2.9.29/install-php-extensions /usr/local/bin/
 RUN apk add --no-cache git libzip-dev zip \
     && docker-php-ext-install zip \
     && cd /var/www/html \
