@@ -22,7 +22,11 @@ function get_token_limit(){
 	$token_limit = apcu_fetch("token_limit");
 	$index = apcu_fetch($_SESSION['username']);
 	$index_status = apcu_fetch("STUDENT"); #$_SESSION['status']
+	$global_token_limit = getenv("TOKEN_LIMIT");
 
+	if ($global_token_limit <= 0) {
+		return $global_token_limit;
+	}
 
     if (has_tokenlimit($token_limit, $index)) {
 
@@ -33,7 +37,7 @@ function get_token_limit(){
         return $token_limit[$index_status]['token_limit'];
     }
 
-    return getenv("TOKEN_LIMIT");
+    return $global_token_limit;
 
 }
 
