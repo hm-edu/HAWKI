@@ -41,35 +41,62 @@ class StreamControllerLimit extends StreamController
 
     public function handleAiConnectionRequest(Request $request)
     {
-
-        $hawki  = User::find(1); // HAWKI user 
-        $avatar_url = $this->avatarStorage->getUrl('profile_avatars',
-                                            $hawki->username,
-                                            $hawki->avatar_id);
-
-
-        
-        if (strtolower(env('TOKEN_LIMIT', '')) == "true"){
+        $token_limit_set = strtolower(getenv('TOKEN_LIMIT')) ?? "false";
+        $reachedLimit = false;
+        if ($token_limit_set == "true"){
             $reachedLimit = $this->checkTokenLimit();
-        }else{
-            $reachedLimit = false;
         }
 
         if(!$reachedLimit){
-           parent::handleAiConnectionRequest($request);
+            return parent::handleAiConnectionRequest($request);
+            //return NULL;
         }
         
         $translation = $this->languageController->getTranslation();
-        $message = $translation["test"];
+        $message = $translation["tokenUsedMessage"];
         $content = ['content' => [
             'text' => $message,
             ],
         ];
         if ($request['broadcast']){
-            $this->handleGroupChatRequest($request, $content);
-            return null;
+            return $this->handleGroupChatRequest($request, $content);
+            //return null;
         }
 
+        return $this->handleRequest($request, $content);        
+    }
+
+
+    private function checkTokenLimit()
+    {
+        $today = Carbon::today();
+        $userId = Auth::user()->id;
+
+        $result = DB::table('usage_records')
+            ->selectRaw('SUM(prompt_tokens + completion_tokens) AS total' )
+            ->where('updated_at', '>=', $today->subDays(2))
+            ->where('user_id', $userId)
+            ->groupBy('user_id')
+            ->first();
+
+        //Log::info('My DBquery:' . ($result->total ?? "0"));
+
+        $Limit = env('LIMIT', 0);        
+
+        if ( is_null($result) || $result->total <= $Limit){
+            return false;
+        }
+
+        return true;
+    }
+
+    private function handleRequest(request $data, array $content)
+    {
+        $request = $data;
+        $hawki  = User::find(1); // HAWKI user 
+        $avatar_url = $this->avatarStorage->getUrl('profile_avatars',
+                                            $hawki->username,
+                                            $hawki->avatar_id);
         if ($request['payload']['stream']){
 
             return response()->stream(function () use ($hawki, $avatar_url, $request, $content){
@@ -121,33 +148,6 @@ class StreamControllerLimit extends StreamController
                 'content'=> $content['content'],
             ]); 
         }
-
-    }
-
-
-    private function checkTokenLimit()
-    {
-        $today = Carbon::today();
-        $userId = Auth::user()->id;
-
-        $result = DB::table('usage_records')
-            ->selectRaw('SUM(prompt_tokens + completion_tokens) AS total' )
-            ->where('updated_at', '>=', $today->subDays(2))
-            ->where('user_id', $userId)
-            ->groupBy('user_id')
-            ->first();
-
-
-
-        //Log::info('My DBquery:' . ($result->total ?? "0"));
-
-        $Limit = env('LIMIT','');        
-
-        if ( is_null($result->total) || $result->total <= $Limit){
-            return false;
-        }
-
-        return true;
     }
 
     private function handleGroupChatRequest(request $data, array $content): void
