@@ -318,7 +318,14 @@ function createChatItem(conv = null){
 
     if(conv){
         convItem.querySelector('.selection-item').setAttribute('slug', conv.slug);
-        label.textContent = conv.conv_name;
+        const convKey = await keychainGet('aiConvKey');
+        try{
+            const convNameObj = JSON.parse(conv.convName);
+            const convName = await decryptWithSymKey(convKey, convNameObj.ciphertext, convNameObj.iv, convNameObj.tag, false);
+            label.textContent = convName;
+        }catch(SyntaxError){
+            label.textContent = conv.conv_name;
+        }
     }
     else{
         label.textContent = 'New Chat';
@@ -387,10 +394,15 @@ async function submitConvToServer(convName) {
         'iv':cryptSystemPrompt.iv,
         'tag':cryptSystemPrompt.tag,
     });
-
+    const CryptConvName = await encryptWithSymKey(convKey, systemPrompt, false);
+    const convNameStr = JSON.stringify({
+        'ciphertext':CryptConvName.ciphertext,
+        'iv':CryptConvName.iv,
+        'tag':CryptConvName.tag, 
+    })
 
     const requestObject = {
-        conv_name: convName,
+        conv_name: convNameStr,
         system_prompt: systemPromptStr
     }
 

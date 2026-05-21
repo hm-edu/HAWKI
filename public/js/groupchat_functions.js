@@ -511,6 +511,7 @@ async function onSuccessfulRoomCreation(roomData){
     const description = inputs.querySelector('#room-description-input').value;
     const systemPrompt = inputs.querySelector('#system-prompt-input').value;
     const image = roomCreationAvatarBlob;
+    const roomName = inputs.querySelector('#chat-name-input').value;
 
     //generate encryption key
     const roomKey = await generateKey();
@@ -531,12 +532,19 @@ async function onSuccessfulRoomCreation(roomData){
         'iv':cryptSystemPrompt.iv,
         'tag':cryptSystemPrompt.tag,
     });
+    const cryptRoomName = await encryptWithSymKey(roomKey, roomName, false);
+    const roomNameStr = JSON.stringify({
+        'ciphertext':cryptRoomName.ciphertext,
+        'iv':cryptRoomName.iv,
+        'tag':cryptRoomName.tag,
+    });
 
 
     const formData = new FormData();
     if(systemPromptStr) formData.append('system_prompt', systemPromptStr)
     if(descriptionStr)formData.append('description', descriptionStr)
     if(image) formData.append('image',  image)
+    if(roomNameStr) formData.append('name', roomNameStr)
 
     updateRoomInfo(roomData.slug, formData)
     rooms.push(roomData);
@@ -840,6 +848,7 @@ async function loadRoom(btn=null, slug=null){
     clearInput();
 
     activeRoom = roomData;
+
     const chatControlPanel = document.querySelector('#room-control-panel');
     chatControlPanel.querySelector('#chat-name').textContent = roomData.name;
     chatControlPanel.querySelector('#chat-slug').textContent = roomData.slug;
@@ -857,7 +866,7 @@ async function loadRoom(btn=null, slug=null){
     }
 
     loadRoomMembers(roomData);
-
+    //console.log(slug);
     const roomKey = await keychainGet(slug);
     const aiCryptoSalt = await fetchServerSalt('AI_CRYPTO_SALT');
     const aiKey = await deriveKey(roomKey, slug, aiCryptoSalt);
@@ -875,6 +884,9 @@ async function loadRoom(btn=null, slug=null){
         document.getElementById('input-controls-props-panel').querySelector('#system_prompt_field').textContent = systemPrompt;
         activeRoom.system_prompt = systemPrompt;
     }
+    const roomNameObj = JSON.parse(roomData.name);
+    const roomName = await decryptWithSymKey(roomKey, roomNameObj.ciphertext, roomNameObj.iv, roomNameObj.tag, false);
+    chatControlPanel.querySelector('#chat-name').textContent = roomName;
 
     for (const msgData of roomData.messagesData) {
         const key = msgData.message_role === 'assistant' ? aiKey : roomKey;
@@ -1291,9 +1303,15 @@ async function submitInfoField(){
         'iv':cryptSystemPrompt.iv,
         'tag':cryptSystemPrompt.tag,
     });
+    const cryptRoomName = await encryptWithSymKey(roomKey, chatName, false);
+    const roomNameStr = JSON.stringify({
+        'ciphertext':cryptRoomName.ciphertext,
+        'iv':cryptRoomName.iv,
+        'tag':cryptRoomName.tag,
+    });
 
     const formData = new FormData();
-    if(chatName) formData.append('name', chatName);
+    if(chatName) formData.append('name', roomNameStr);
     if(systemPromptStr) formData.append('system_prompt', systemPromptStr)
     if(descriptionStr)formData.append('description', descriptionStr)
 

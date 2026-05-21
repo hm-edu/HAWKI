@@ -5,6 +5,32 @@ function initializeGUI(){
     //prepare text areas
     const textareas = document.querySelectorAll('.singleLineTextarea');
     textareas.forEach(textarea => {
+        try{
+            var convKey;
+            const selection = document.querySelector('.selection-list');
+            if (selection.id == 'chats-list'){
+                // console.log(selection.id);
+                convKey = keychainGet('aiConvKey');
+            };
+            if (selection.id == 'rooms-list'){
+
+                const slug = textarea.closest('.selection-item').getAttribute('slug')
+                //console.log(slug);
+                convKey = keychainGet(slug);
+            };
+            if (convKey != null){
+                convKey.then((value) => {
+                    const convNameObj = JSON.parse(textarea.textContent);
+                    const convName = decryptWithSymKey(value, convNameObj.ciphertext, convNameObj.iv, convNameObj.tag, false);
+                    convName.then((value) =>{
+                        textarea.textContent = value;
+                    });
+                });
+            };
+        }
+        catch(SyntaxError){
+            //textarea.textContent = "test";
+        }
         textarea.addEventListener('keydown', function(e) {
             if (e.key === 'Enter') {
             e.preventDefault(); // Prevent the default behavior, which is to insert a newline
