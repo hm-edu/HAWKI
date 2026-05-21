@@ -39,7 +39,11 @@ class AppServiceProvider extends ServiceProvider
      * Bootstrap any application services.
      */
     public function boot(): void
-    {
+    {   
+        if(env('APP_ENV') !== 'local')
+        {
+            \Illuminate\Support\Facades\URL::forceScheme('https');
+        }
         $this->bootWebdavStorage();
     }
 
