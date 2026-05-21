@@ -28,7 +28,7 @@ class Room extends Model
         parent::boot();
 
         static::creating(function ($room) {
-            $room->slug = Str::slug($room->room_name) . '-' . Str::random(6);
+            $room->slug = Str::random(30);
         });
     }
 
