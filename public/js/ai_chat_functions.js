@@ -399,7 +399,7 @@ async function submitConvToServer(convName) {
         'iv':cryptSystemPrompt.iv,
         'tag':cryptSystemPrompt.tag,
     });
-    const CryptConvName = await encryptWithSymKey(convKey, systemPrompt, false);
+    const CryptConvName = await encryptWithSymKey(convKey, convName, false);
     const convNameStr = JSON.stringify({
         'ciphertext':CryptConvName.ciphertext,
         'iv':CryptConvName.iv,
