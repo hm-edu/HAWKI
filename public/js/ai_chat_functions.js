@@ -318,11 +318,16 @@ function createChatItem(conv = null){
 
     if(conv){
         convItem.querySelector('.selection-item').setAttribute('slug', conv.slug);
-        const convKey = await keychainGet('aiConvKey');
+        const convKey = keychainGet('aiConvKey');
         try{
             const convNameObj = JSON.parse(conv.convName);
-            const convName = await decryptWithSymKey(convKey, convNameObj.ciphertext, convNameObj.iv, convNameObj.tag, false);
-            label.textContent = convName;
+            convKey.then((value) =>{
+                const convName = decryptWithSymKey(convKey, convNameObj.ciphertext, convNameObj.iv, convNameObj.tag, false);
+                convName.then((value) => {
+                    label.textContent = value;
+                });
+            });
+            
         }catch(SyntaxError){
             label.textContent = conv.conv_name;
         }
