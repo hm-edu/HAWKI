@@ -91,7 +91,7 @@ These guidelines are intended as orientation for the responsible use of HAWKI.
 The university can only provide this service if no personal data is entered.  
 
 **Contact for questions:**  
-Prof. Stefan Wölwer, Arian Sadafi, Jonas Trippler, or Vincent Timm.  
+[Helpdesk-IT](https://jira.cc.hm.edu/servicedesk/customer/portal/1) 
 
 Regardless of these guidelines, the terms of OpenAI and Google apply.  
 

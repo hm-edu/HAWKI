@@ -71,10 +71,13 @@
                 <div class="content-text-container">
                     <p>{{ $translation['AboutHAWKI_Info'] }}</p>
                     <p>
+                        <a> HAWK:</a><br/>
                         <a class="accentText contributor-title" target="_blank" href="https://www.hawk.de/en/university/organization-and-persons/register-of-persons/stefan-wolwer"><b>Prof. Stefan Wölwer</b></a>{{ $translation['AboutHAWKI_StefanInfo'] }}<br/>
                         <a class="accentText contributor-title" target="_blank" href="https://www.hawk.de/de/hochschule/organisation-und-personen/personenverzeichnis/jonas-trippler"><b>Jonas Trippler</b></a>{{ $translation['AboutHAWKI_JonasInfo'] }}<br/>
                         <a class="accentText contributor-title" target="_blank" href="https://www.hawk.de/de/hochschule/organisation-und-personen/personenverzeichnis/vincent-timm"><b>Vincent Timm</b></a>{{ $translation['AboutHAWKI_VincentInfo'] }}<br/>
                         <a class="accentText contributor-title" target="_blank" href="https://www.hawk.de/de/hochschule/organisation-und-personen/personenverzeichnis/arian-sadafi"><b>Arian Sadafi</b></a>{{ $translation['AboutHAWKI_ArianInfo'] }}</p>
+                        <a> HM:</a><br/>
+                        <a> <b>Tobias Irlinger</b></a> {{ $translation['AboutHAWKI_ZentraleIT'] }}
                     </p>
                 </div>
             </div>
