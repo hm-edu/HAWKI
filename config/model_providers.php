@@ -11,7 +11,7 @@ return [
     |
     */
     'default_models' => [
-        'default_model' => env('DEFAULT_MODEL', 'gpt-4.1-nano'),
+        'default_model' => env('DEFAULT_MODEL', 'mistral.mixtral-8x7b-instruct-v0:1'),
         'default_web_search_model' => env('DEFAULT_WEBSEARCH_MODEL', ''),
         'default_file_upload_model' => env('DEFAULT_FILEUPLOAD_MODEL', ''),
         'default_vision_model' =>  env('DEFAULT_VISION_MODEL', ''),
@@ -101,6 +101,14 @@ return [
             'api_url' => env('OPEN_WEB_UI_API_URL', 'your_url/api/chat/completions'),
             'ping_url' => env('OPEN_WEB_UI_PING_URL', 'your_url/api/models'),
             'models' => require __DIR__ . env('OPEN_WEB_UI_MODEL_LIST_DIR', '/model_lists/openwebui_models.php'),
+        ],
+        'AmazonBedrock' => [
+            'active' => env('AWS_ACTIVE', true),
+            'api_key' => env('AWS_BEARER_TOKEN_BEDROCK'), //AWS_BEARER_TOKEN_BEDROCK
+            'region' => env('AWS_DEFAULT_REGION', 'eu-central-1'),
+            'api_url' => env('AWS_API_URL', 'dummy'),
+            'ping_url' => env('AWS_PING_URL', ''),
+            'models' => require __DIR__ . env('AWS_MODEL_LIST_DIR', '/model_lists/aws_bedrock_models.php'),
         ]
     ]
 ];

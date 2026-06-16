@@ -274,4 +274,9 @@ class AiModel implements JsonSerializable
         $model->context = $context;
         return $model;
     }
+
+    public function getRegion (): string 
+    {
+        return $this->raw['region'] ?? '';
+    }
 }

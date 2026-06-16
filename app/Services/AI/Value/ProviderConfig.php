@@ -150,4 +150,9 @@ readonly class ProviderConfig implements \JsonSerializable
         
         return $this->config[$key];
     }
+
+    public function getRegion(): string
+    {
+        return $this->getOrFail('region');
+    }
 }
