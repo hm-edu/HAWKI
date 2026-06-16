@@ -135,7 +135,7 @@ class StreamControllerLimit extends StreamController
                     'Access-Control-Allow-Origin'=> '*'            
             ]);
 
-            }else{
+        }else{
 
             return response()->json([
                 'author' => [
@@ -145,7 +145,7 @@ class StreamControllerLimit extends StreamController
                         ],
                 'model' => $request['payload']['model'],
                 'isDone' => true,
-                'content'=> $content['content'],
+                'content'=> json_encode($content['content']),
             ]); 
         }
     }
