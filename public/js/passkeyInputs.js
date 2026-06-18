@@ -138,9 +138,15 @@ function initializePasskeyInputs(applyCharacterLimitation = false){
 
 
         // Prevent copy/cut/paste
-        ['copy', 'cut', 'paste'].forEach(evt =>
-            input.addEventListener(evt, e => e.preventDefault())
-        );
+        // ['copy', 'cut', 'paste'].forEach(evt =>
+        //     input.addEventListener(evt, e => e.preventDefault())
+        // );
+        ['copy', 'cut'].forEach(evt => {
+            input.addEventListener(evt, e => {
+                e.preventDefault();
+                navigator.clipboard.writeText(input.dataset.realValue);
+            });
+        });
 
         // Toggle visibility (unchanged, but will read dataset.realValue)
         toggleBtn.addEventListener('click', function () {
