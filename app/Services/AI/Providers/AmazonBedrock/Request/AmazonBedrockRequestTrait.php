@@ -10,17 +10,26 @@ use App\Services\AI\Value\TokenUsage;
 
 trait AmazonBedrockRequestTrait
 {
-    protected function extractUsage(AiModel $model, \Aws\Result $data): ?TokenUsage
+    protected function extractUsage(AiModel $model, ?\Aws\Result $data, array $stream = null): ?TokenUsage
     {
-        if (empty($data['usage'])) {
-            return null;
+        // if (is_null($data)&& is_null($stream)) {
+        //     return null;
+        // }
+        if(!is_null($data)){
+            return new TokenUsage(
+                model: $model,
+                promptTokens: (int)$data['usage']['inputTokens'],
+                completionTokens: (int)$data['usage']['outputTokens'],
+            );
         }
-        
-        return new TokenUsage(
-            model: $model,
-            promptTokens: (int)$data['usage']['inputTokens'],
-            completionTokens: (int)$data['usage']['outputTokens'],
-        );
+        if(!is_null($stream)){
+            return new TokenUsage(
+                model: $model,
+                promptTokens: (int)$stream['usage']['inputTokens'],
+                completionTokens: (int)$stream['usage']['outputTokens'],
+            );
+        }
+        return null;
     }
     
     private function containsKey($obj, $targetKey)

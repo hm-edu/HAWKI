@@ -67,7 +67,7 @@ class AmazonBedrockRequestConverter
      */
     protected function handleModelSpecificFormatting(string $modelId, array $messages): array
     {
-        $array = ['mistral.mixtral-8x7b-instruct-v0:1','eu.mistral.pixtral-large-2502-v1:0'];
+        $array = ['mistral.mixtral-8x7b-instruct-v0:1','eu.mistral.pixtral-large-2502-v1:0', 'eu.anthropic.claude-haiku-4-5-20251001-v1:0'];
         $contains = in_array($modelId, $array, true);
         // Special case for o1-mini: convert system to user
         if ($contains && isset($messages[0]) && $messages[0]['role'] === 'system') {

@@ -24,7 +24,6 @@ class AmazonBedrockNonStreamingRequest extends AbstractRequest
     
     public function execute(AiModel $model): AiResponse
     {   
-        $url = $model->getProvider()->getConfig()->getApiUrl();
         $this->payload['stream'] = false;
         return $this->executeNonStreamingRequest(
             model: $model,

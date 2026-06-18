@@ -8,6 +8,9 @@ namespace App\Services\AI\Providers\AmazonBedrock\Request;
 use App\Services\AI\Providers\AbstractRequest;
 use App\Services\AI\Value\AiModel;
 use App\Services\AI\Value\AiResponse;
+use Aws\BedrockRuntime\BedrockRuntimeClient;
+use Aws\Exception\AwsException;
+use RuntimeException;
 
 class AmazonBedrockStreamingRequest extends AbstractRequest
 {
@@ -31,27 +34,27 @@ class AmazonBedrockStreamingRequest extends AbstractRequest
         );
     }
     
-    protected function chunkToResponse(AiModel $model, string $chunk): AiResponse
+    protected function chunkToResponse(AiModel $model, array $chunk): AiResponse
     {
-        $jsonChunk = json_decode($chunk, true);
         
         $content = '';
         $isDone = false;
         $usage = null;
         
         // Check for the finish_reason flag
-        if (isset($jsonChunk['choices'][0]['finish_reason']) && $jsonChunk['choices'][0]['finish_reason'] === 'stop') {
+        if (isset($chunk['messageStop']['stopReason']) && $chunk['messageStop']['stopReason'] == 'end_turn' ) {
             $isDone = true;
         }
         
         // Extract usage data if available
-        if (!empty($jsonChunk['usage'])) {
-            $usage = $this->extractUsage($model, $jsonChunk);
+        if (!empty($chunk['metadata'])) {
+            $usage = $this->extractUsage($model, null, $chunk['metadata']);
+            //$isDone = true;
         }
         
         // Extract content if available
-        if ($this->containsKey($jsonChunk, 'content')) {
-            $content = $this->getValueForKey($jsonChunk, 'content');
+        if (isset($chunk['contentBlockDelta'])) {
+            $content = $chunk['contentBlockDelta']['delta']['text'];
         }
         
         return new AiResponse(
@@ -61,5 +64,50 @@ class AmazonBedrockStreamingRequest extends AbstractRequest
             usage: $usage,
             isDone: $isDone
         );
+    }
+
+
+
+    /* Executes a streaming request to the AI model.
+     *
+     * @param AiModel $model The AI model to interact with.
+     * @param array $payload The request payload to send.
+     * @param callable(AiResponse $response): void $onData Callback executed for each chunk of data received.
+     * @param callable(AiModel $model, string $chunk): AiResponse $chunkToResponse Callback to transform a chunk into a response.
+     * @param callable():array|null $getHttpHeaders Optional callback to generate HTTP headers.
+     * @param string|null $apiUrl Optional API URL to override the model's default.
+     * @param int|null $timeout Optional timeout for the request in seconds.
+     * @return void
+     */
+    protected function executeStreamingRequest(
+        AiModel   $model,
+        array     $payload,
+        callable  $onData,
+        callable  $chunkToResponse,
+        ?callable $getHttpHeaders = null,
+        ?string   $apiUrl = null,
+        ?int      $timeout = null
+    ): void
+    {
+        set_time_limit($timeout ?? 120);
+
+        $region = $model->getRegion();
+        if ($region == ''){
+            $region = $model->getProvider()->getConfig()->getRegion();
+        }
+
+        $client = new BedrockRuntimeClient([
+            'region' => $region,
+            'profile' => 'default'
+        ]);
+
+        $response = $client->converseStream([
+                'modelId' => $model->getid(),
+                'messages' => $payload['messages']
+        ]);
+
+        foreach($response['stream'] as $event) {
+            $onData($chunkToResponse($model, $event));
+        }
     }
 }
