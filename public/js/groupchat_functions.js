@@ -884,9 +884,11 @@ async function loadRoom(btn=null, slug=null){
         document.getElementById('input-controls-props-panel').querySelector('#system_prompt_field').textContent = systemPrompt;
         activeRoom.system_prompt = systemPrompt;
     }
-    const roomNameObj = JSON.parse(roomData.name);
-    const roomName = await decryptWithSymKey(roomKey, roomNameObj.ciphertext, roomNameObj.iv, roomNameObj.tag, false);
-    chatControlPanel.querySelector('#chat-name').textContent = roomName;
+    try{
+        const roomNameObj = JSON.parse(roomData.name);
+        const roomName = await decryptWithSymKey(roomKey, roomNameObj.ciphertext, roomNameObj.iv, roomNameObj.tag, false);
+        chatControlPanel.querySelector('#chat-name').textContent = roomName;
+    }catch(SyntaxError){}
 
     for (const msgData of roomData.messagesData) {
         const key = msgData.message_role === 'assistant' ? aiKey : roomKey;
