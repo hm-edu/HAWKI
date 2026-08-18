@@ -69,8 +69,23 @@ class StreamControllerLimit extends StreamController
 
     private function checkTokenLimit()
     {
+        $Limit = env('LIMIT', 0);
+
+        if ($Limit < 0){
+            return true;
+        }
+        //'user_increased_limit'
         $today = Carbon::today();
         $userId = Auth::user()->id;
+
+        $userLimit = DB::table('user_increased_limit')
+            ->select('limit')
+            ->where('user_id', $userId)
+            ->first();
+
+        if (!is_null($userLimit)){
+            $Limit = $userLimit;
+        }
 
         $result = DB::table('usage_records')
             ->selectRaw('SUM(prompt_tokens + completion_tokens) AS total' )
@@ -80,8 +95,6 @@ class StreamControllerLimit extends StreamController
             ->first();
 
         //Log::info('My DBquery:' . ($result->total ?? "0"));
-
-        $Limit = env('LIMIT', 0);        
 
         if ( is_null($result) || $result->total <= $Limit){
             return false;
