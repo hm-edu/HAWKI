@@ -1,6 +1,6 @@
 <div class="tool-selection-panel burger-dropdown" id="tool-selection-panel" >
 @foreach($toolKit as $tool)
-    @if(!in_array($tool, ['stream', 'file_upload', 'vision', 'tool_calling']))
+    @if(!in_array($tool, ['stream', 'file_upload', 'vision', 'tool_calling', 'region']))
         @php $label = $toolKitLabels[$tool] ?? ucwords(str_replace('_', ' ', $tool)); @endphp
         <button class="burger-item tool-selector"
                 data-reference="{{$tool}}"

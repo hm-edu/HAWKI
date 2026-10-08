@@ -40,7 +40,7 @@ return [
     |
     */
     'system_models' => [
-        'title_generator' => env('TITLE_GENERATOR_MODEL', 'gpt-4.1-nano'),
+        'title_generator' => env('TITLE_GENERATOR_MODEL', 'eu.anthropic.claude-haiku-4-5-20251001-v1:0'),
         'prompt_improver' => env('PROMPT_IMPROVEMENT_MODEL', 'gpt-4.1-nano'),
         'summarizer' => env('SUMMARIZER_MODEL', 'gpt-4.1-nano'),
     ],
@@ -101,6 +101,14 @@ return [
             'api_url' => env('OPEN_WEB_UI_API_URL', 'your_url/api/chat/completions'),
             'ping_url' => env('OPEN_WEB_UI_PING_URL', 'your_url/api/models'),
             'models' => require __DIR__ . env('OPEN_WEB_UI_MODEL_LIST_DIR', '/model_lists/openwebui_models.php'),
+        ],
+        'AmazonBedrock' => [
+            'active' => env('AWS_ACTIVE', true),
+            'api_key' => env('AWS_BEARER_TOKEN_BEDROCK'), //AWS_BEARER_TOKEN_BEDROCK
+            'region' => env('AWS_DEFAULT_REGION', 'eu-central-1'),
+            'api_url' => env('AWS_API_URL', 'dummy'),
+            'ping_url' => env('AWS_PING_URL', ''),
+            'models' => require __DIR__ . env('AWS_MODEL_LIST_DIR', '/model_lists/aws_bedrock_models.php'),
         ]
     ]
 ];
