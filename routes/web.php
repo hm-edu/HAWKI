@@ -12,6 +12,7 @@ use App\Http\Controllers\LoginController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RoomController;
 use App\Http\Controllers\StreamController;
+use App\Http\Controllers\StreamControllerLimit;
 use Illuminate\Support\Facades\Route;
 
 // Health check routes (no authentication required for Docker health checks)
@@ -104,7 +105,7 @@ Route::middleware('prevent_back')->group(function () {
 
 
             Route::delete('/req/conv/attachment/delete', [AiConvController::class, 'deleteAttachment']);
-            Route::post('/req/streamAI', [StreamController::class, 'handleAiConnectionRequest']);
+            Route::post('/req/streamAI', [StreamControllerLimit::class, 'handleAiConnectionRequest']);
 
             // LINK PREVIEW
             Route::post('/api/link-preview', [LinkPreviewController::class, 'getPreview']);
@@ -127,7 +128,7 @@ Route::middleware('prevent_back')->group(function () {
             Route::middleware('roomEditor')->group(function () {
                 Route::post('/req/room/sendMessage/{slug}', [RoomController::class, 'sendMessage']);
                 Route::post('/req/room/updateMessage/{slug}', [RoomController::class, 'updateMessage']);
-                Route::post('/req/room/streamAI/{slug}', [StreamController::class, 'handleAiConnectionRequest']);
+                Route::post('/req/room/streamAI/{slug}', [StreamControllerLimit::class, 'handleAiConnectionRequest']);
 
                 Route::post('/req/room/attachment/upload/{slug}', [RoomController::class, 'storeAttachment']);
             });
