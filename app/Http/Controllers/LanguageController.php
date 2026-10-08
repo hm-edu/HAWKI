@@ -84,7 +84,7 @@ class LanguageController extends Controller
 
     private function fetchTranslationFiles($prefix) {
         $languagePath = resource_path('language/');
-        $files = scandir($languagePath);
+        $files = scandir($languagePath, $sorting_order = SCANDIR_SORT_DESCENDING);
 
         $translations = [];
         $defaultTranslations = [];

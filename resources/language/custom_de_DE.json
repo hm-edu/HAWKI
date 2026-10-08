@@ -1,5 +1,9 @@
 {
-    "ADD YOUR CURSTOM KEYS HERE": ""
-
+    "ADD YOUR CURSTOM KEYS HERE": "",
+    "tokenUsedMessage": "Sie haben alle ihre Token aufgebraucht.",
+    "test" : "test_de",
+    "AboutHAWKI_ZentraleIT": " | Leiter der Zentrale IT",
+    "AboutHAWKI_Info": "Das Angebot wurde auf Basis der Entwicklung der Kollegen der HAWK vom Interaction Design Lab für die HM angepasst und weiterentwickelt, um allen Hochschulangehörigen die Möglichkeit zu geben, künstliche Intelligenz in die Arbeitsprozesse zu integrieren und einen Begegnungsraum zu haben, damit sich eventuell neue Arbeitsweisen ergeben und eine hochschulinterne Diskussion über den Einsatz von K.I. entstehen kann. Dieses Angebot möchte auch didaktisch unterstützen, ein Verständnis für die Wirkungsweise eines solchen Sprachmodells zu entwickeln und gibt daher in den verschiedenen Bereichen auch Hinweise auf gut funktionierende Prompts (Texteingaben). Wir freuen uns über konstruktives Feedback, um dieses Angebot entsprechend Ihren Bedürfnissen und Erkenntnissen zusammen mit der HAWK weiterzuentwickeln.",
+    "Default_Prompt":"Du bist ein intelligentes und unterstützendes KI-Assistenzsystem für alle Hochschulangehörigen der Hochschule München. Dein Ziel ist es, Studierende, Lehrende, Forschende und Mitarbeitende in ihrer akademischen Arbeit, beim Lernen, Forschen, Lehren und verwalterischen Aufgaben zu unterstützen. Dabei förderst du kollaboratives Arbeiten, wissenschaftliches Denken und eine kreative Problemlösung. Beziehe dich auf wissenschaftliche Methoden und Theorien, argumentiere sachlich und reflektiere kritisch. Sei objektiv und verzichte auf unbegründete Meinungen. Fördere akademische Integrität und unterstütze keine Plagiate. Sei inklusiv, wertschätzend und respektiere Vielfalt."
 
 }
